@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
     <meta name="project" content="game_of_life v0.1.0">
-    <title>Zelle — game_of_life v0.1.0</title>
+    <title>Bedienung — game_of_life v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
     <script src="dist/sidebar_items-051a341e6d.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
-  <body data-type="modules">
+  <body data-type="extras">
     <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
 <div class="main">
 
@@ -62,24 +62,23 @@ game_of_life      </a>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
-      <h1>
-        Zelle <small class="app-vsn">(game_of_life v0.1.0)</small>
-          <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellen_struct.ex#L1" title="View Source" class="view-source" rel="help">
-            <span class="icon-code" aria-hidden="true"></span>
-            <span class="sr-only">View Source</span>
-          </a>
-      </h1>
-
-
-        <section id="moduledoc">
-<p>Gibt die Koordinaten im Zellautomaten wieder</p><h2 id="module-parameter" class="section-heading">
-  <a href="#module-parameter" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Parameter
+<h1>Bedienung</h1><p>Das Besteht aus zwei verschiedenen Ansichten. </p><h2 id="auswahl" class="section-heading">
+  <a href="#auswahl" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Auswahl
 </h2>
-<ul><li>x, y: Koordinaten im Zellautomaten</li></ul>        </section>
-
-
-      <footer class="footer">
+<p><img src="Bilder/Ansicht 1.jpg" alt=""></img></p><p>In der ersten Ansicht ist wird die Dimension ausgewählt die nachher
+der Zellautomat haben soll. Dazu wird in den jeweiligen Textfeldern
+die entsprechende Zahl eingetragen. Aktuell werden nicht mehr als eine 
+Dimension von 20x20 unterstützt.</p><h2 id="das-feld" class="section-heading">
+  <a href="#das-feld" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Das Feld
+</h2>
+<p><img src="Bilder/Ansicht 2.jpg" alt=""></img></p><p>In der zweiten Ansicht ist jetzt das Feld des Zellautomaten zu sehen.
+Die einzelnen Felder können durch anklicken ihren Status ändern.</p><p><strong>Unten links</strong> ist der Button <code class="inline">next</code> zu sehen. Durch auslösen des Buttons
+wird der nächte Zustand des Buttons berechnet und angezeigt.</p><p><strong>Unten Rechts</strong>  ist der Button <code class="inline">run</code> zu sehen. Dieser lässt den
+Zellautomaten in Intervallen jede Sekunde neu berechen. Durch einen weitern
+click auf den Button wird der Automat wieder angehalten. </p><ul><li>wichtig: Beim aktiviren von <code class="inline">run</code> wird das Feld in dieser Version
+nicht automatisch aktualisiert.</li></ul>      <footer class="footer">
         <p>
           <span class="line">
             Built using

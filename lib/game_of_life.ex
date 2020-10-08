@@ -1,6 +1,6 @@
 defmodule GameOfLife do
   @moduledoc """
-  Starter application using the Scenic framework.
+  Startet die Application durch nutzen des Scenic Framworks
   """
 
   def start(_type, _args) do

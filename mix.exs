@@ -11,12 +11,21 @@ defmodule GameOfLife.MixProject do
       deps: deps(),
 
       # Docs
-      name: "GameOfLife",
+      #name: "GameOfLife",
+      #main: "GameOfLife",
       source_url: "https://github.com/DosennooB/Game_of_life",
       docs: [
-        main: "GameLife", # The main page in the docs
-        extras: ["README.md"]
+        main: "GameOfLife", # The main page in the docs
+        extras: doc()
       ]
+    ]
+  end
+
+  defp doc do
+    [
+      "doc_md/GameOfLife.md",
+      "doc_md/Installation.md",
+      "doc_md/Bedienung.md"
     ]
   end
 

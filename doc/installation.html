@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
-    <meta name="project" content="GameOfLife v0.1.0">
-    <title>README — GameOfLife v0.1.0</title>
+    <meta name="project" content="game_of_life v0.1.0">
+    <title>Installation — game_of_life v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-    <script src="dist/sidebar_items-6d934e07cb.js"></script>
+    <script src="dist/sidebar_items-051a341e6d.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
@@ -40,8 +40,8 @@
 
   <div class="sidebar-header">
     <div class="sidebar-projectDetails">
-      <a href="GameLife.html" class="sidebar-projectName">
-GameOfLife      </a>
+      <a href="GameOfLife.html" class="sidebar-projectName">
+game_of_life      </a>
       <strong class="sidebar-projectVersion">
         v0.1.0
       </strong>
@@ -62,7 +62,21 @@ GameOfLife      </a>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
-<p>Readme text goes here</p><p>From template</p>      <footer class="footer">
+<h1>Installation</h1><p>Um dieses Pogramm kompilieren und ausführen zu können, 
+sind ein paar Besonderheiten zu beachten.</p><p>-<strong>Betriebsystem:</strong> Auf Grund des Framworks wird entwerder 
+eine Linux oder MacOS Distribution vorraus gesetzt. Alternativ ist es 
+möglich das Pogramm in Windows und WSL zu starten.</p><p>-<strong>Erlang und Elixir:</strong> Für das ausfüren de Pogramms ist eine Instalation der Erlang- VM
+und von Elixir nötig.</p><p>-<strong>Bibliotehken:</strong> Scenic setzt GLFW und GLEW Biliotehken vorraus.
+Installationsanleitungen finden Sie <a href="https://hexdocs.pm/scenic/install_dependencies.html">hier</a>.</p><h2 id="für-ubuntu-20" class="section-heading">
+  <a href="#für-ubuntu-20" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Für Ubuntu 20
+</h2>
+<pre><code class="bash">sudo apt-get update
+sudo apt-get install pkgconf libglfw3 libglfw3-dev libglew2.1 libglew-dev</code></pre><h2 id="für-wsl-unter-windows-10" class="section-heading">
+  <a href="#für-wsl-unter-windows-10" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Für WSL unter Windows 10
+</h2>
+<p>Zum nutzen von Scenic unter WSL folgen Sie dieser <a href="https://medium.com/@jeffborch/running-the-scenic-elixir-gui-framework-on-windows-10-using-wsl-f9c01fd276f6">Anleitung</a>.</p><p>-<strong>Vor dem Kompilieren:</strong> Nach dem clonen des Git-Repositorys werden mit dem Befehle </p><pre><code class="bash">mix do deps.get</code></pre><p>die restlichen Abhängigkeiten herruntergeladen.</p><p>Mit </p><pre><code class="bash">mix scenic.run</code></pre><p>wird das Programm gestartet.</p>      <footer class="footer">
         <p>
           <span class="line">
             Built using

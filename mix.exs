@@ -8,7 +8,15 @@ defmodule GameOfLife.MixProject do
       elixir: "~> 1.7",
       build_embedded: true,
       start_permanent: Mix.env() == :prod,
-      deps: deps()
+      deps: deps(),
+
+      # Docs
+      name: "GameOfLife",
+      source_url: "https://github.com/DosennooB/Game_of_life",
+      docs: [
+        main: "GameLife", # The main page in the docs
+        extras: ["README.md"]
+      ]
     ]
   end
 
@@ -25,6 +33,7 @@ defmodule GameOfLife.MixProject do
     [
       {:scenic, "~> 0.10"},
       {:scenic_driver_glfw, "~> 0.10", targets: :host},
+      {:ex_doc, "~> 0.22", only: :dev, runtime: false},
     ]
   end
 end

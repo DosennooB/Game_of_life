@@ -14,14 +14,14 @@ defmodule GameOfLife.Scene.Field do
 
 
   @graph Graph.build()
-  |> button("Tick",
+  |> button("next",
                 id: :next_step,
                 height: 100,
                 width: 300,
                 font_size: @text_size,
                 t: {0,900}
               )
-  |> button("Intervall",
+  |> button("run",
               id: :intervall,
               height: 100,
               width: 300,
@@ -68,25 +68,28 @@ defmodule GameOfLife.Scene.Field do
     end
   end
 
-  def filter_event({:click, :intervall}, _from, %{graph: g} = state) do
+  def filter_event({:click, :intervall}, _from, %{graph: gr} = state) do
     send :zellautomat, {:automatic_tick, true, self()}
-    Scenic.Scene.cast(GameOfLife.Scene.Field,:tick)
-
+    {_t, text} = Graph.get!(gr, :intervall).data
+    IO.inspect(text)
+    g = run_stop(text, gr)
+    new_state = Map.put(state, :graph , g)
     receive do
       {:new_map, map} ->
         new_g = refrech_cell(g,map)
-        {:noreply, state, push: new_g}
+        {:noreply, new_state, push: new_g}
       after 0_800 ->
-        {:noreply, state, push: g}
+        {:noreply, new_state, push: g}
     end
-
   end
 
-  def handle_cast(:tick, %{graph: g} = state) do
 
-      IO.puts("tick")
-
-    {:noreply, state, push: g}
+  def run_stop(text, gr)do
+    if text == "run" do
+      Graph.modify(gr, :intervall, &button(&1, "stop"))
+    else
+      Graph.modify(gr, :intervall, &button(&1, "run"))
+    end
   end
 
   def build_up(graph, 0, 1, _xline, _yline)do

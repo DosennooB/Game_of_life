@@ -84,7 +84,8 @@ def init() do
   def tick() do
     map = Agent.get(:akt_map, fn map -> map end)
     Enum.map(map, fn{k,_v}-> todo_zellen_around(k) end)
-    zellentodo = Agent.get(:todo, fn list -> list end)
+    zellentodo_doppelt = Agent.get(:todo, fn list -> list end)
+    zellentodo = Enum.uniq(zellentodo_doppelt)
     Enum.map(zellentodo, fn k -> alive_in_new_map(k) end)
 
     nmap = Agent.get(:new_map, fn map -> map end)

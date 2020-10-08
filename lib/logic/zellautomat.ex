@@ -104,10 +104,12 @@ def init() do
     todo_zellen_around( xline, yline, [1,1,1,0,0,0,-1,-1,-1],[1,0,-1,1,0,-1,1,0,-1] ,k)
   end
 
+  @doc false
   def todo_zellen_around( _xline, _yline, [], [], _k) do
     true
   end
 
+  @doc false
   def todo_zellen_around( xline, yline, [hx|tx], [hy|ty], k) do
     x = hx + k.x
     y = hy + k.y
@@ -153,6 +155,7 @@ def init() do
   def around_wert(wert, _xline, _yline, [], [], _k) do
      wert
   end
+
   def around_wert(wert, xline, yline, [hx|tx], [hy|ty], k = %Zelle{}) do
      x = hx + k.x
      y = hy + k.y

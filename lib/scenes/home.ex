@@ -11,7 +11,7 @@ defmodule GameOfLife.Scene.Home do
   @moduledoc """
   Scene wird als erstes aufgerufen.
   In ihr werden die Dimension des Zellautomaten eingegeben.
-  Wichtig Zellen nur in Dimensionen bis maximal 20x20 eingeben.
+  Wichtig: Zellen nur in Dimensionen bis maximal 20x20 eingeben.
   In der aktuellen Version eine Limitation des Frameworks
   """
 

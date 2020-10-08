@@ -12,6 +12,13 @@ defmodule GameOfLife.Scene.Field do
   @offset 50
   @tile_field 900
 
+  @moduledoc """
+  Ist das eingentliche Spiel Feld.
+  besteht aus einem Spielfeld aus Buttons die jeweils eine Zelle representieren.
+
+  Durch den Button "next" kann der nächte Zustand des Spielfeldes berechnet werden.
+  Durch "run" wird der der Zelleautomat gegewisen in Intervallen seinen Zustand neu zu berechnen.
+  """
 
   @graph Graph.build()
   |> button("next",
@@ -28,15 +35,16 @@ defmodule GameOfLife.Scene.Field do
               font_size: @text_size,
               t: {700,900})
 
-
+@doc """
+Baut das Gitter auf anhand der Dimensionen aus Agent :xy
+"""
   def init(_, opts) do
+    ##Damit die Agent gestartet werden können (nicht gut) //TODO
     Process.sleep(300)
     xline = Agent.get(:xy, &Map.get(&1, :x))
     yline = Agent.get(:xy, &Map.get(&1, :y))
 
     g = build_up(@graph, xline, yline, xline, yline)
-    #g = Scenic.Component.Button.add_to_graph(@graph, "shgs")
-    #g = Graph.add(@graph,b)
     state = %{
       graph: g,
       viewport: opts[:viewport]
@@ -45,29 +53,42 @@ defmodule GameOfLife.Scene.Field do
 
   end
 
+
+  @doc """
+  Event auf dem Spielfeldraster.
+  Zellen_struct wird als id zurück gegeben.
+  Dies wird den Zellautomaten übergeben.
+  """
   def filter_event({:click, z = %Zelle{}}, _from, %{graph: g} = state) do
     send :zellautomat, {:toggel_cell, z, self()}
     receive do
       {:new_map, map} ->
         new_g = refrech_cell(g,map)
         {:noreply, state, push: new_g}
-      after 0_800 ->
+      after 0_500 ->
         {:noreply, state, push: g}
     end
    #{:noreply, state, push: g}
   end
-
+  @doc """
+  lässt den automaten den neuen Status berechnen und
+  die GUI den neuen State annehmen.
+  """
   def filter_event({:click, :next_step}, _from, %{graph: g} = state) do
     send :zellautomat, {:new_tick, self()}
     receive do
       {:new_map, map} ->
         new_g = refrech_cell(g,map)
         {:noreply, state, push: new_g}
-      after 0_800 ->
+      after 0_500 ->
         {:noreply, state, push: g}
     end
   end
 
+  @doc """
+  Gibt den Zellautomaten dass Signal automatisch weiter zu laufen
+  oder aufzuhören. Updatete den Button entsprechend.
+  """
   def filter_event({:click, :intervall}, _from, %{graph: gr} = state) do
     send :zellautomat, {:automatic_tick, true, self()}
     {_t, text} = Graph.get!(gr, :intervall).data
@@ -83,8 +104,8 @@ defmodule GameOfLife.Scene.Field do
     end
   end
 
-
-  def run_stop(text, gr)do
+#Hilfsfunktion für Filterefent intervall
+  defp run_stop(text, gr)do
     if text == "run" do
       Graph.modify(gr, :intervall, &button(&1, "stop"))
     else
@@ -95,27 +116,39 @@ defmodule GameOfLife.Scene.Field do
   def build_up(graph, 0, 1, _xline, _yline)do
     graph
   end
+
   def build_up(graph, 0, y, xline, yline)do
     build_up(graph,xline,y-1,xline, yline)
   end
-  def build_up(graph =%Graph{}, x, y, xline, yline)do
 
+  @doc """
+  Baut das Zellgitter gemäß der Dimensionen auf.
+  Ich erstellt buttons in Richtigen Größen und an den richtigen Positionen.
+  gibt diesen Graf zum Schluss zurrück
+  """
+  def build_up(graph =%Graph{}, x, y, xline, yline)do
     z = %Zelle{
       x: x,
       y: y
     }
     g = graph
     |>button("", id: z,theme: :dark, height: @tile_field / yline, width: @tile_field / xline, t: {@tile_field / xline * (x-1) +@offset, @tile_field / yline * (y-1)} )
-    #g = Scenic.Component.Button.add_to_graph(graph,"hallo", id: z, translate: {x*1 ,y*1 } )
-     #|>button("", id: z,hight: @tile_field / yline, width: @tile_field / xline, t: {@tile_field / xline * (x-1), @tile_field / yline * (y-1)} )
     build_up(g,x-1,y,xline, yline)
   end
 
+   @doc """
+   Alle ids der Componenten in einem Graf werden ausgegeben und an change_theme
+   übergeben
+   """
   def refrech_cell(graph =%Graph{} , map)do
     id = Map.keys(graph.ids)
     change_theme(id, map, graph)
   end
 
+  @doc """
+  Ändert das Aussehen der Zellen so das sie dem Zustand des neuen
+  Automaten enstsprechen.
+  """
   def change_theme([],_map, g)do
     g
   end

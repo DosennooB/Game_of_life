@@ -67,6 +67,7 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
   `{:click, :intervall}`
   Gibt den Zellautomaten dass Signal automatisch weiter zu laufen
   oder aufzuhören. Updatete den Button entsprechend.
+  Kein Update des Feldes.
   """
   @spec filter_event({:click , z ::Zelle.t()}, from ::pid(), state::term())
   :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}|{:noreply, state::term(), [push: new_g::Scenic.Graph.t()]}
@@ -75,9 +76,11 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
     receive do
       {:new_map, map} ->
         new_g = refrech_cell(g,map)
-        {:noreply, state, push: new_g}
+        new_state = Map.put(state, :graph , new_g)
+        {:noreply, new_state, push: new_g}
       after 0_500 ->
         {:noreply, state, push: g}
+        IO.puts("test")
     end
   end
 
@@ -88,31 +91,26 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
     receive do
       {:new_map, map} ->
         new_g = refrech_cell(g,map)
-        {:noreply, state, push: new_g}
+        new_state = Map.put(state, :graph , new_g)
+        {:noreply, new_state, push: new_g}
       after 0_500 ->
         {:noreply, state, push: g}
+        IO.puts("test")
     end
   end
 
 
   @spec filter_event({:click , :intervall}, from ::pid(), state::term())
-  :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}|{:noreply, state::term(), [push: new_g::Scenic.Graph.t()]}
+  :: {:noreply, new_state::term(), [push: g::Scenic.Graph.t()]}
   def filter_event({:click, :intervall}, _from, %{graph: gr} = state) do
     send :zellautomat, {:automatic_tick, true, self()}
     {_t, text} = Graph.get!(gr, :intervall).data
-    IO.inspect(text)
     g = run_stop(text, gr)
     new_state = Map.put(state, :graph , g)
-    receive do
-      {:new_map, map} ->
-        new_g = refrech_cell(g,map)
-        {:noreply, new_state, push: new_g}
-      after 0_800 ->
-        {:noreply, new_state, push: g}
-    end
+    {:noreply, new_state, push: g}
   end
 
-#Hilfsfunktion für Filterefent intervall
+#Hilfsfunktion für Filterevent intervall
   defp run_stop(text, gr)do
     if text == "run" do
       Graph.modify(gr, :intervall, &button(&1, "stop"))

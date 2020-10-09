@@ -4,6 +4,7 @@ GameOfLife.Scene.Home.html
 GameOfLife.html
 Zellautomat.html
 Zelle.html
+anforderungen.html
 api-reference.html
 bedienung.html
 dist/app-aaa6eb1824b11a32f32d.js
@@ -12,9 +13,10 @@ dist/html/fonts/icomoon.eot
 dist/html/fonts/icomoon.svg
 dist/html/fonts/icomoon.ttf
 dist/html/fonts/icomoon.woff
-dist/search_items-d073364207.js
-dist/sidebar_items-051a341e6d.js
+dist/search_items-495f7fcefe.js
+dist/sidebar_items-5f5b3f22c1.js
 gameoflife.html
 index.html
 installation.html
+kritikundänderungen.html
 search.html

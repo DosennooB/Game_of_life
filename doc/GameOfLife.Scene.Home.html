@@ -8,7 +8,7 @@
     <meta name="project" content="game_of_life v0.1.0">
     <title>GameOfLife.Scene.Home — game_of_life v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-    <script src="dist/sidebar_items-66b25d02c6.js"></script>
+    <script src="dist/sidebar_items-5f5b3f22c1.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
@@ -73,8 +73,7 @@ game_of_life      </a>
 
         <section id="moduledoc">
 <p>Scene wird als erstes aufgerufen.
-In ihr werden die Dimension des Zellautomaten eingegeben.
-Wichtig: Zellen nur in Dimensionen bis maximal 20x20 eingeben.
+In ihr werden die Dimension des Zellautomaten eingegeben.</p><p>Wichtig: Zellen nur in Dimensionen bis maximal 20x20 eingeben.
 In der aktuellen Version eine Limitation des Frameworks</p>        </section>
 
         <section id="summary" class="details-list">
@@ -93,7 +92,7 @@ In der aktuellen Version eine Limitation des Frameworks</p>        </section>
   <div class="summary-signature">
     <a href="#filter_event/3">filter_event(event, from, scene_state)</a>
   </div>
-    <div class="summary-synopsis"><p>Neuer Wert für Zeile im State akualisiert</p></div>
+    <div class="summary-synopsis"><p>Reagiert auf Benutzereingaben</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
@@ -119,15 +118,34 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">filter_event(event, from, scene_state)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/home.ex#L47" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/home.ex#L58" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
   </div>
 
   <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>filter_event({:click, :start}, from :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
+  {:halt, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+          <pre>filter_event(
+  {:value_changed, :reihe, value :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()},
+  from :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(),
+  state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+) :: {:noreply, new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+          <pre>filter_event(
+  {:value_changed, :spalte, value :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()},
+  from :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(),
+  state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+) :: {:noreply, new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+      </div>
 
-<p>Neuer Wert für Zeile im State akualisiert</p>  </section>
+<p>Reagiert auf Benutzereingaben</p><p><code class="inline">{:click, :start}</code>
+Startet und übergibt den Zellautomaten die Dimensionen.
+Ruft das Hauptfenster auf.</p><p><code class="inline">{:value_changed, :reihe, value}</code>
+Neuer Wert für Reihe im State aktualisiert.</p><p><code class="inline">{:value_changed, :spalte, value}</code>
+Neuer Wert für Zeile im State akualisiert.</p>  </section>
 </section>
 <section class="detail" id="init/2">
   <div class="detail-header">
@@ -136,7 +154,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">init(_, opts)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/home.ex#L32" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/home.ex#L33" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>

@@ -1,21 +1,24 @@
 defmodule Zellautomat do
 @moduledoc """
 Logic des Zellautomaten.
-nötige Paarameter werden in Agents gespeichert.
-## Agents
-xy: hier werden die Dimensionen des Zellautomaten gespeichert
+Die nötigen Paarameter werden in Agents gespeichert.
+
+**Agents:**
+- **xy:** hier werden die Dimensionen des Zellautomaten gespeichert
   es wird auch noch gespeichert ob der Automat von selber laufen soll oder nicht
-akt_map: Die Werte der zellen werden als 1 und 0 in einer map mit dem Zellenstruct als id gespeicher
-    um Platz zu sparen werden nach möglichkeit nur zellen mit 1 gespeichert
-new_map: dient als Zwischenspicher bei der Berechnung des neuen Zellautomaten
-todo: enthält Zellen die zum nächsten Schritt neu berechnet werden müssen
+- **akt_map:** Die Werte der zellen werden als 1 und 0 in einer map mit dem Zellenstruct als id gespeichert
+  um Platz zu sparen werden nach möglichkeit nur zellen mit 1 gespeichert
+- **new_map:** dient als Zwischenspicher bei der Berechnung des neuen Zellautomaten
+- **todo:** enthält Zellen die zum nächsten Schritt neu berechnet werden müssen
 """
 
 
 @doc """
-Initialisierung des Automaten
-starten der Agenten und setzen der Dimensionen
+Initialisierung des Automaten.
+
+Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
 """
+@spec init :: no_return()
 def init() do
     Process.register(self(), :zellautomat)
     receive do
@@ -31,22 +34,24 @@ def init() do
 
   @doc """
   Hauptschleife
-  es werde drei Signale verarbeitet
-  die neuen Werte werden über {:new_map, data}
-  zurück gegeben
 
-  toggel_cell:
-  es kann geziehlt eine Zelle an oder aus geschaltet werden
-  abhängig von ihrem aktuellen Zustand
+  Es werde drei Signale verarbeitet
+  die neuen Werte werden über `{:new_map, data :: map()}`
+  zurück gegeben.
+
+  - **toggel_cell:**
+  Es kann geziehlt eine Zelle an oder aus geschaltet werden,
+  abhängig von ihrem aktuellen Zustand.
 
 
-  new_tick:
-  Der nächste zustand des automaten wird berechnet
+  - **new_tick:**
+  Der nächste Zustand des Automaten wird berechnet.
 
-  automatic_tick:
-  alle n Sekunden wir ein neuer Zustand der Zellautomaten berechnet
-  durch den Parameter toggle kann diese Funktion an oder ausgeschaltet werden
+  - **automatic_tick:**
+  Alle n Sekunden wird ein neuer Zustand der Zellautomaten berechnet.
+  Durch den Parameter toggle kann diese Funktion an oder ausgeschaltet werden.
   """
+  @spec automat :: no_return()
   def automat() do
     receive do
       {:toggel_cell, zelle = %Zelle{}, pid} ->
@@ -77,10 +82,13 @@ def init() do
   end
 
   @doc """
+  Lässt den nächsten Zustand des Zellautomaten berechnen.
+
   Lässten nächten Zustand berechnen und gibt die neuen Werte
   an die Agents weiter. Nur Zellen die den Wert 1 haben oder Nachtbar einer
-  Zelle mit dem Wert 1 werden berechnet.
+  Zelle mit dem Wert 1 sind, werden berechnet.
   """
+  @spec tick :: :ok
   def tick() do
     map = Agent.get(:akt_map, fn map -> map end)
     Enum.map(map, fn{k,_v}-> todo_zellen_around(k) end)
@@ -95,18 +103,21 @@ def init() do
   end
 
   @doc """
-  übergibt alle Zellen um die angegebene Zelle und die angegebene Zelle
-  dem :todo Agent. Es seiden sie befinden sich auserhalb der Zellautomaten Dimensionen
+  Ermittelt Nachtbarn und die angegebene Zelle.
+
+  Übergibt alle Nachtbarn und die angegebene Zelle,
+  dem `:todo` Agent. Es sei den, sie befinden sich auserhalb des Zellautomaten.
   """
-  def todo_zellen_around(k = %Zelle{}) do
+  @spec todo_zellen_around(zelle :: Zelle.t()) :: :ok
+  def todo_zellen_around(zelle = %Zelle{}) do
     xline = Agent.get(:xy, &Map.get(&1, :x))
     yline = Agent.get(:xy, &Map.get(&1, :y))
-    todo_zellen_around( xline, yline, [1,1,1,0,0,0,-1,-1,-1],[1,0,-1,1,0,-1,1,0,-1] ,k)
+    todo_zellen_around( xline, yline, [1,1,1,0,0,0,-1,-1,-1],[1,0,-1,1,0,-1,1,0,-1] ,zelle)
   end
 
   @doc false
   def todo_zellen_around( _xline, _yline, [], [], _k) do
-    true
+    :ok
   end
 
   @doc false
@@ -127,10 +138,13 @@ def init() do
   end
 
   @doc """
-  Überprüft ob die Zelle den Wert 0 oder 1 bekommt
-  an hand des eigenen Wertes und der Summe der Nachbarn.
-  Übergibt nur Zellen mit Wert 1 dem :new_map Agent
+  Enscheidet über den Zustand der Zelle
+
+  Überprüft ob die Zelle den Wert 0 oder 1 bekommt,
+  anhand des eigenen Wertes und der Summe der Nachbarn.
+  Übergibt nur Zellen mit Wert 1 dem `:new_map` Agent
   """
+  @spec alive_in_new_map(k :: Zelle.t()) :: true | false
   def alive_in_new_map(k = %Zelle{}) do
     xline = Agent.get(:xy, &Map.get(&1, :x))
     yline = Agent.get(:xy, &Map.get(&1, :y))
@@ -140,18 +154,24 @@ def init() do
       zellenwert == 1 ->
         if wert == 2 or wert == 3 do
           Agent.update(:new_map, &Map.put(&1, k, 1))
+          true
         end
       zellenwert == 0 ->
         if wert == 3 do
           Agent.update(:new_map, &Map.put(&1, k, 1))
+          false
         end
     end
+    false
   end
 
 
   @doc """
-  Berechnet die Summe der Umligenden Zellen und gibt diese zurück
+  Summe der Nachtbarn
+
+  Berechnet die Summe der Umligenden Zellen und gibt diese zurück.
   """
+  @spec around_wert(wert :: pos_integer(), xline :: pos_integer(), yline :: pos_integer(), list1 :: list(), list2 :: list(), k :: Zelle.t()) :: pos_integer()
   def around_wert(wert, _xline, _yline, [], [], _k) do
      wert
   end

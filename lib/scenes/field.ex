@@ -3,9 +3,6 @@ defmodule GameOfLife.Scene.Field do
   require Logger
 
   alias Scenic.Graph
-  alias Scenic.ViewPort
-
-  import Scenic.Primitives
   import Scenic.Components
 
   @text_size 64
@@ -13,11 +10,11 @@ defmodule GameOfLife.Scene.Field do
   @tile_field 900
 
   @moduledoc """
-  Ist das eingentliche Spiel Feld.
-  besteht aus einem Spielfeld aus Buttons die jeweils eine Zelle representieren.
+  Ist die eingentliche Ansicht des Zellautomaten.
 
+  Besteht aus einem Spielfeld aus Buttons, die jeweils eine Zelle representieren.
   Durch den Button "next" kann der nächte Zustand des Spielfeldes berechnet werden.
-  Durch "run" wird der der Zelleautomat gegewisen in Intervallen seinen Zustand neu zu berechnen.
+  Durch "run" wird der der Zelleautomat angegewiesen in Intervallen seinen Zustand neu zu berechnen.
   """
 
   @graph Graph.build()
@@ -36,7 +33,9 @@ defmodule GameOfLife.Scene.Field do
               t: {700,900})
 
 @doc """
-Baut das Gitter auf anhand der Dimensionen aus Agent :xy
+Initialisierung der Oberfläche
+
+Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
 """
   def init(_, opts) do
     ##Damit die Agent gestartet werden können (nicht gut) //TODO
@@ -53,12 +52,24 @@ Baut das Gitter auf anhand der Dimensionen aus Agent :xy
 
   end
 
+ @doc """
+  Verarbeitet die Eingabe eines Buttons.
 
-  @doc """
+  `{:click, z::Zelle.t()}`
   Event auf dem Spielfeldraster.
-  Zellen_struct wird als id zurück gegeben.
-  Dies wird den Zellautomaten übergeben.
+  Zelle.t() wird dem Zellautomaten übergeben updatet die GUI
+
+
+  `{:click, :next_step}`
+  Lässt den Automaten den neuen Zustand berechnen und
+  die GUI den neuen State annehmen.
+
+  `{:click, :intervall}`
+  Gibt den Zellautomaten dass Signal automatisch weiter zu laufen
+  oder aufzuhören. Updatete den Button entsprechend.
   """
+  @spec filter_event({:click , z ::Zelle.t()}, from ::pid(), state::term())
+  :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}|{:noreply, state::term(), [push: new_g::Scenic.Graph.t()]}
   def filter_event({:click, z = %Zelle{}}, _from, %{graph: g} = state) do
     send :zellautomat, {:toggel_cell, z, self()}
     receive do
@@ -68,12 +79,10 @@ Baut das Gitter auf anhand der Dimensionen aus Agent :xy
       after 0_500 ->
         {:noreply, state, push: g}
     end
-   #{:noreply, state, push: g}
   end
-  @doc """
-  lässt den automaten den neuen Status berechnen und
-  die GUI den neuen State annehmen.
-  """
+
+  @spec filter_event({:click , :next_step}, from ::pid(), state::term())
+  :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}|{:noreply, state::term(), [push: new_g::Scenic.Graph.t()]}
   def filter_event({:click, :next_step}, _from, %{graph: g} = state) do
     send :zellautomat, {:new_tick, self()}
     receive do
@@ -85,10 +94,9 @@ Baut das Gitter auf anhand der Dimensionen aus Agent :xy
     end
   end
 
-  @doc """
-  Gibt den Zellautomaten dass Signal automatisch weiter zu laufen
-  oder aufzuhören. Updatete den Button entsprechend.
-  """
+
+  @spec filter_event({:click , :intervall}, from ::pid(), state::term())
+  :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}|{:noreply, state::term(), [push: new_g::Scenic.Graph.t()]}
   def filter_event({:click, :intervall}, _from, %{graph: gr} = state) do
     send :zellautomat, {:automatic_tick, true, self()}
     {_t, text} = Graph.get!(gr, :intervall).data
@@ -113,19 +121,23 @@ Baut das Gitter auf anhand der Dimensionen aus Agent :xy
     end
   end
 
+  @doc false
   def build_up(graph, 0, 1, _xline, _yline)do
     graph
   end
 
+  @doc false
   def build_up(graph, 0, y, xline, yline)do
     build_up(graph,xline,y-1,xline, yline)
   end
 
   @doc """
-  Baut das Zellgitter gemäß der Dimensionen auf.
-  Ich erstellt buttons in Richtigen Größen und an den richtigen Positionen.
-  gibt diesen Graf zum Schluss zurrück
+  Baut das Zellgitter gemäß den Dimensionen auf.
+
+  Funktion erstellt buttons in passenden Größen und Positionen.
+  Gibt diesen Graph zum Schluss zurrück
   """
+  @spec build_up(graph :: Scenic.Graph.t(), x :: pos_integer(), y :: pos_integer(), xline :: pos_integer(), yline :: pos_integer()) :: Scenic.Graph.t()
   def build_up(graph =%Graph{}, x, y, xline, yline)do
     z = %Zelle{
       x: x,
@@ -137,25 +149,29 @@ Baut das Gitter auf anhand der Dimensionen aus Agent :xy
   end
 
    @doc """
-   Alle ids der Componenten in einem Graf werden ausgegeben und an change_theme
-   übergeben
+   Extrahiert Ids aus dem Graph#
+
+   Mit diesen Ids wird change_theme() aufgerufen.
    """
-  def refrech_cell(graph =%Graph{} , map)do
+  @spec refrech_cell(graph :: Scenic.Graph.t(), map :: map()) :: Scenic.Graph.t()
+   def refrech_cell(graph =%Graph{} , map)do
     id = Map.keys(graph.ids)
     change_theme(id, map, graph)
   end
 
   @doc """
-  Ändert das Aussehen der Zellen so das sie dem Zustand des neuen
-  Automaten enstsprechen.
+  Passt den Zustand der Zellen an
+
+  Ändert das Aussehen der Zellen so das sie dem neuen Zustand des Automaten enstsprechen.
   """
+  @spec change_theme(id :: list(), map :: map(), g :: Scenic.Graph.t()) :: Scenic.Graph.t()
   def change_theme([],_map, g)do
     g
   end
   def change_theme([id= %Zelle{}|idtail], map, g)do
       wert = Map.get(map,id)
       if wert == 1 do
-        new_g = Graph.modify(g, id, &button(&1, "hallo"))
+        new_g = Graph.modify(g, id, &button(&1, "hallo")) #schnelle Lösung
         change_theme(idtail, map, new_g)
       else
         new_g = Graph.modify(g, id, &button(&1, ""))

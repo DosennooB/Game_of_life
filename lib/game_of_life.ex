@@ -1,6 +1,6 @@
 defmodule GameOfLife do
   @moduledoc """
-  Startet die Application durch nutzen des Scenic Framworks
+  Der Einsprungspunkt des Prgramms
   """
 
   def start(_type, _args) do

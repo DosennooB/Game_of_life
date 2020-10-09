@@ -11,6 +11,7 @@ defmodule GameOfLife.Scene.Home do
   @moduledoc """
   Scene wird als erstes aufgerufen.
   In ihr werden die Dimension des Zellautomaten eingegeben.
+
   Wichtig: Zellen nur in Dimensionen bis maximal 20x20 eingeben.
   In der aktuellen Version eine Limitation des Frameworks
   """
@@ -41,9 +42,19 @@ defmodule GameOfLife.Scene.Home do
   end
 
   @doc """
+  Reagiert auf Benutzereingaben
+
+  `{:click, :start}`
   Startet und übergibt den Zellautomaten die Dimensionen.
   Ruft das Hauptfenster auf.
+
+  `{:value_changed, :reihe, value}`
+  Neuer Wert für Reihe im State aktualisiert.
+
+  `{:value_changed, :spalte, value}`
+  Neuer Wert für Zeile im State akualisiert.
   """
+  @spec filter_event({:click, :start}, from :: pid(), state :: term()) :: {:halt , state ::term()}
   def filter_event({:click, :start}, _from, state) do
     %{spalte: spalte} = state
     %{reihe: reihe} = state
@@ -55,16 +66,13 @@ defmodule GameOfLife.Scene.Home do
     {:halt, state}
   end
 
-  @doc """
-  Neuer Wert für Reihe im State aktualisiert.
-  """
+  @spec filter_event({:value_changed, :reihe, value :: String.t()}, from :: pid(), state :: term()) :: {:noreply, new_state :: term()}
   def filter_event({:value_changed, :reihe, value},_from, state) do
     new_state = Map.put(state, :reihe, value)
     {:noreply, new_state}
   end
-  @doc """
-  Neuer Wert für Zeile im State akualisiert
-  """
+
+  @spec filter_event({:value_changed, :spalte, value :: String.t()}, from :: pid(), state :: term()) :: {:noreply, new_state :: term()}
   def filter_event({:value_changed, :spalte, value},_from, state) do
     new_state = Map.put(state, :spalte, value)
     {:noreply, new_state}

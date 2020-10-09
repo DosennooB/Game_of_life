@@ -59,7 +59,9 @@ defmodule GameOfLife.Scene.Home do
     %{spalte: spalte} = state
     %{reihe: reihe} = state
     zellautomat_pid = spawn(fn -> Zellautomat.init() end)
-    send zellautomat_pid,{:set_xy, String.to_integer(reihe), String.to_integer(spalte)}
+    spalte_int = min(20, String.to_integer(spalte)) #Um in aktueller Version dimension nicht zu groß werden zu lassen
+    reihe_int = min(20, String.to_integer(reihe))
+    send zellautomat_pid,{:set_xy, reihe_int, spalte_int}
     %{viewport: vp} = state
     s = GameOfLife.Scene.Field
     ViewPort.set_root(vp, {s, nil})

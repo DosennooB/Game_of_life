@@ -169,7 +169,8 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
   def change_theme([id= %Zelle{}|idtail], map, g)do
       wert = Map.get(map,id)
       if wert == 1 do
-        new_g = Graph.modify(g, id, &button(&1, "hallo")) #schnelle Lösung
+        #new_g = Graph.modify(g, id, fn  %{styles: st} = x -> %{x | styles: Map.put(st,:theme, :danger)}end)
+        new_g = Graph.modify(g, id, &button(&1, "Hallo")) #schnelle Lösung
         change_theme(idtail, map, new_g)
       else
         new_g = Graph.modify(g, id, &button(&1, ""))

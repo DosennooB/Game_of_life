@@ -5,8 +5,8 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
-    <meta name="project" content="game_of_life v0.1.0">
-    <title>GameOfLife.Scene.Field — game_of_life v0.1.0</title>
+    <meta name="project" content="game_of_life v0.2.0">
+    <title>GameOfLife.Scene.Field — game_of_life v0.2.0</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
     <script src="dist/sidebar_items-5f5b3f22c1.js"></script>
       <script src="docs_config.js"></script>
@@ -43,7 +43,7 @@
       <a href="GameOfLife.html" class="sidebar-projectName">
 game_of_life      </a>
       <strong class="sidebar-projectVersion">
-        v0.1.0
+        v0.2.0
       </strong>
     </div>
   </div>
@@ -63,7 +63,7 @@ game_of_life      </a>
     <div id="content" class="content-inner">
 
       <h1>
-        GameOfLife.Scene.Field <small class="app-vsn">(game_of_life v0.1.0)</small>
+        GameOfLife.Scene.Field <small class="app-vsn">(game_of_life v0.2.0)</small>
           <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
             <span class="sr-only">View Source</span>
@@ -136,7 +136,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">build_up(graph, x, y, xline, yline)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L125" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L123" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -164,7 +164,7 @@ Gibt diesen Graph zum Schluss zurrück</p>  </section>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">change_theme(list, map, g)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L168" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L166" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -186,7 +186,7 @@ Gibt diesen Graph zum Schluss zurrück</p>  </section>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">filter_event(event, from, scene_state)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L73" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L74" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -202,8 +202,7 @@ Gibt diesen Graph zum Schluss zurrück</p>  </section>
   {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}
   | {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, new_g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}</pre>
           <pre>filter_event({:click, :intervall}, from :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
-  {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}
-  | {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, new_g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}</pre>
+  {:noreply, new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}</pre>
       </div>
 
 <p>Verarbeitet die Eingabe eines Buttons.</p><p><code class="inline">{:click, z::Zelle.t()}</code>
@@ -212,7 +211,8 @@ Zelle.t() wird dem Zellautomaten übergeben updatet die GUI</p><p><code class="i
 Lässt den Automaten den neuen Zustand berechnen und
 die GUI den neuen State annehmen.</p><p><code class="inline">{:click, :intervall}</code>
 Gibt den Zellautomaten dass Signal automatisch weiter zu laufen
-oder aufzuhören. Updatete den Button entsprechend.</p>  </section>
+oder aufzuhören. Updatete den Button entsprechend.
+Kein Update des Feldes.</p>  </section>
 </section>
 <section class="detail" id="init/2">
   <div class="detail-header">
@@ -238,7 +238,7 @@ oder aufzuhören. Updatete den Button entsprechend.</p>  </section>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">refrech_cell(graph, map)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L157" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L155" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>

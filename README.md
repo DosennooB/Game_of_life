@@ -1,4 +1,1 @@
-Readme text goes here
-
-
-From template
+Dokumente so wie Installationsanleitungen sind in doc/ zu finden.

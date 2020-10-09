@@ -6,7 +6,7 @@ als Grafik Framwork.
 
 ## Übersicht 
 
-*[Installation]
-*[Bedeinung]
-*[Anforderungen und Überlegungen]
-*[Limitationen]
+* [Installation](installation.html)
+* [Bedienung](bedienung.html)
+* [Anforderungen und Überlegungen](anforderungen.html)
+* [Kritik und Änderungen](kritikundänderungen.html)

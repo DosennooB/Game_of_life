@@ -25,7 +25,9 @@ defmodule GameOfLife.MixProject do
     [
       "doc_md/GameOfLife.md",
       "doc_md/Installation.md",
-      "doc_md/Bedienung.md"
+      "doc_md/Bedienung.md",
+      "doc_md/Anforderungen.md",
+      "doc_md/KritikundÄnderungen.md"
     ]
   end
 

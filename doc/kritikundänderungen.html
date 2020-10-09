@@ -6,13 +6,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
     <meta name="project" content="game_of_life v0.1.0">
-    <title>GameOfLife — game_of_life v0.1.0</title>
+    <title>Kritik und Änderungen — game_of_life v0.1.0</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
     <script src="dist/sidebar_items-66b25d02c6.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
-  <body data-type="modules">
+  <body data-type="extras">
     <script>try { if(localStorage.getItem('night-mode') === 'true') document.body.className += ' night-mode'; } catch (e) { }</script>
 <div class="main">
 
@@ -62,66 +62,23 @@ game_of_life      </a>
   <div class="content-outer">
     <div id="content" class="content-inner">
 
-      <h1>
-        GameOfLife <small class="app-vsn">(game_of_life v0.1.0)</small>
-          <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/game_of_life.ex#L1" title="View Source" class="view-source" rel="help">
-            <span class="icon-code" aria-hidden="true"></span>
-            <span class="sr-only">View Source</span>
-          </a>
-      </h1>
-
-
-        <section id="moduledoc">
-<p>Startet die Application durch nutzen des Scenic Framworks</p>        </section>
-
-        <section id="summary" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#summary">
-              <span class="icon-link" aria-hidden="true"></span>
-              <span class="sr-only">Link to this section</span>
-            </a>
-            Summary
-          </h1>
-  <div class="summary-functions summary">
-    <h2>
-      <a href="#functions">Functions</a>
-    </h2>
-<div class="summary-row">
-  <div class="summary-signature">
-    <a href="#start/2">start(type, args)</a>
-  </div>
-</div>
-  </div>
-        </section>
-
-        <section id="functions" class="details-list">
-          <h1 class="section-heading">
-            <a class="hover-link" href="#functions">
-              <span class="icon-link" aria-hidden="true"></span>
-              <span class="sr-only">Link to this section</span>
-            </a>
-Functions          </h1>
-          <div class="functions-list">
-<section class="detail" id="start/2">
-  <div class="detail-header">
-    <a href="#start/2" class="detail-link" title="Link to this function">
-      <span class="icon-link" aria-hidden="true"></span>
-      <span class="sr-only">Link to this function</span>
-    </a>
-    <h1 class="signature">start(type, args)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/game_of_life.ex#L6" class="view-source" rel="help" title="View Source">
-       <span class="icon-code" aria-hidden="true"></span>
-       <span class="sr-only">View Source</span>
-     </a>
-  </div>
-
-  <section class="docstring">
-
-  </section>
-</section>
-          </div>
-        </section>
-      <footer class="footer">
+<h1>Kritik und Änderungen</h1><h2 id="limitationen" class="section-heading">
+  <a href="#limitationen" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Limitationen
+</h2>
+<p>Das Prgramm ist in drei großen Punkten limitiert</p><ul><li><p><strong>Dimension:</strong> Durch die Nutzung von Buttons als Feld des Zellautomaten ist das Pogramm in der Dimension beschränkt eine ab einer gewissen Zahl an Button stürzt das Grafik Framework ab.</p></li><li><p><strong>Aktualisierung:</strong> Es ist mir kein Weg bekannt gewesen eine Callback Methode in der 
+Nutzeroberfläche zu implementieren. Dadurch kann der Server des Zellautomaten keine Aktualisierung
+der Nutzeroberfläche anstoßen.</p></li><li><p><strong>Anpassbarkeit</strong> Das Programm ist nur auf eine Fenstergröße ausgerichtet. Diese kann nicht verändert werden.</p></li></ul><h2 id="kritik" class="section-heading">
+  <a href="#kritik" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Kritik
+</h2>
+<p>Ein Programm zu erstellen mit einem Framwork das man erst wärend des versteht, birgt einige 
+Risiken. Vorallem wenn Limitationen erst nach und nach bekannt werden.</p><h2 id="änderungen" class="section-heading">
+  <a href="#änderungen" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Änderungen
+</h2>
+<p>Für eine Zükünftige weitere Entwicklung des Pogramms währen folgende Dinge möglich.</p><ul><li><p><strong>Button ersetzen:</strong> Um mehr Zellen in der Benutzeroberflächen anzeigen zu können. Müssen die Button durch z.B. Rechtecke (Rect) ersetzt werden. Diese können in höheren Stückzahlen erscheinen.</p></li><li><p><strong>Aktualisierung:</strong> Eine Möglichkeit finden die einen Oberflächenaktualisierung in Intervallen ermöglicht.</p></li><li><p><strong>Testerweiterung:</strong> Die Tests in der Aktuellen Version decken nur einen kleinen Teil des Pogramms ab.
+Diese sollten in Zukunft ausgebaut werden.</p></li><li><p><strong>Fensteränderung:</strong> Zukünftick sollte man in der ersten Ansicht die Möglichkeit haben die Größe des Fensters ein zustellen oder zu mindest einen Skalierungsfaktor zu nutzen. </p></li></ul>      <footer class="footer">
         <p>
           <span class="line">
             Built using

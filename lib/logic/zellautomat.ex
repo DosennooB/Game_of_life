@@ -50,7 +50,7 @@ def init() do
   - **automatic_tick:**
   Alle n Sekunden wird ein neuer Zustand der Zellautomaten berechnet.
   Durch den Parameter toggle kann diese Funktion an oder ausgeschaltet werden.
-  Gibt den neuen Zustand nicht zurück.
+  Gibt den neuen Zustand zurück.
   """
   @spec automat :: no_return()
   def automat() do

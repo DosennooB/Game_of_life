@@ -24,6 +24,3 @@ wird der nächste Zustand des Buttons berechnet und angezeigt.
 **Unten Rechts**  ist der Button ``` run ``` zu sehen. Dieser lässt den
 Zellautomaten in Intervallen jede Sekunde neu berechnen. Durch einen weiteren
 click auf den Button wird der Automat wieder angehalten. 
-
-- wichtig: Beim aktivieren von ```run``` wird das Feld in dieser Version
-nicht automatisch aktualisiert.

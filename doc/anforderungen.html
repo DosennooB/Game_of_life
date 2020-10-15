@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
-    <meta name="project" content="game_of_life v0.2.0">
-    <title>Anforderungen und Überlegungen — game_of_life v0.2.0</title>
+    <meta name="project" content="game_of_life v0.2.5">
+    <title>Anforderungen und Überlegungen — game_of_life v0.2.5</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-    <script src="dist/sidebar_items-5f5b3f22c1.js"></script>
+    <script src="dist/sidebar_items-54db03cc63.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
@@ -43,7 +43,7 @@
       <a href="GameOfLife.html" class="sidebar-projectName">
 game_of_life      </a>
       <strong class="sidebar-projectVersion">
-        v0.2.0
+        v0.2.5
       </strong>
     </div>
   </div>
@@ -67,7 +67,7 @@ game_of_life      </a>
   Anforderungen
 </h2>
 <p>Für mich gab es zu diesem Projekt ein paar Anforderungen,
-die ich mir im Vorhinein aufgeschrieben hatte.</p><ul><li>1.) Das Programm soll eine grafische Nutzeroberfläche haben, in der der Zellautomat dargestellt wird. </li><li>2.) Der Zellautomat muss mit verschiedenen Dimensionen initialisiert werden können.</li><li>3.) Ein Feld im Zellautomaten kann durch anklicken ihren Zustand wechseln.</li><li>4.) Der Nutzer soll die Möglichkeit haben durch eine Eingabe den nächsten Zustand berechnen zu lassen.</li><li>5.) Der Nutzer soll die Möglichkeit haben durch eine Eingabe die nächsten Zustände in einem Intervall berechnen zu lassen.</li></ul><p>Anforderung 5.) werde ich nicht ohne große Änderungen am Code umsetzte können.</p><h2 id="auswahl-der-programmiersprache" class="section-heading">
+die ich mir im Vorhinein aufgeschrieben hatte.</p><ul><li>1.) Das Programm soll eine grafische Nutzeroberfläche haben, in der der Zellautomat dargestellt wird. </li><li>2.) Der Zellautomat muss mit verschiedenen Dimensionen initialisiert werden können.</li><li>3.) Ein Feld im Zellautomaten kann durch anklicken ihren Zustand wechseln.</li><li>4.) Der Nutzer soll die Möglichkeit haben durch eine Eingabe den nächsten Zustand berechnen zu lassen.</li><li>5.) Der Nutzer soll die Möglichkeit haben durch eine Eingabe die nächsten Zustände in einem Intervall berechnen zu lassen.</li></ul><h2 id="auswahl-der-programmiersprache" class="section-heading">
   <a href="#auswahl-der-programmiersprache" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Auswahl der Programmiersprache
 </h2>
@@ -80,9 +80,9 @@ Projekt damit umsetzten könnte. Allerdings bin ich bei der Ausarbeitung auf Lim
   <a href="#struktur-des-programms" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Struktur des Programms
 </h2>
-<p>Das Programm besteht im weitesten Sinne aus einer Client-Serverarchitektur.
-Der Client hier die Nutzeroberfläche reagiert auf Nutzereingaben und schick diese als Elixir Massage
-an den Server weiter der diese Beantwortet.</p><h3 id="besonderheiten-der-nutzeroberfläche" class="section-heading">
+<p>Das Programm besteht im weitesten Sinne aus Frontend und Backend.
+Das Frontend hier die Nutzeroberfläche reagiert auf Nutzereingaben und schick diese als Elixir Massage
+an den Server. Der Zellautomat ist in diesem Fall das Backend es verarbeitet Massages und berchnet den neuen Zustand. Das Frontend hat eine dedizierte callback Methode, die aufgerufen wird wenn der Zellautomat einen neuen Zustand errechnet hat.</p><h3 id="besonderheiten-der-nutzeroberfläche" class="section-heading">
   <a href="#besonderheiten-der-nutzeroberfläche" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Besonderheiten der Nutzeroberfläche
 </h3>

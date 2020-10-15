@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
-    <meta name="project" content="game_of_life v0.2.0">
-    <title>GameOfLife.Scene.Field — game_of_life v0.2.0</title>
+    <meta name="project" content="game_of_life v0.2.5">
+    <title>GameOfLife.Scene.Field — game_of_life v0.2.5</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-    <script src="dist/sidebar_items-5f5b3f22c1.js"></script>
+    <script src="dist/sidebar_items-54db03cc63.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
@@ -43,7 +43,7 @@
       <a href="GameOfLife.html" class="sidebar-projectName">
 game_of_life      </a>
       <strong class="sidebar-projectVersion">
-        v0.2.0
+        v0.2.5
       </strong>
     </div>
   </div>
@@ -63,7 +63,7 @@ game_of_life      </a>
     <div id="content" class="content-inner">
 
       <h1>
-        GameOfLife.Scene.Field <small class="app-vsn">(game_of_life v0.2.0)</small>
+        GameOfLife.Scene.Field <small class="app-vsn">(game_of_life v0.2.5)</small>
           <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
             <span class="sr-only">View Source</span>
@@ -108,6 +108,12 @@ Durch &quot;run&quot; wird der der Zelleautomat angegewiesen in Intervallen sein
 </div>
 <div class="summary-row">
   <div class="summary-signature">
+    <a href="#handle_info/2">handle_info(arg1, state)</a>
+  </div>
+    <div class="summary-synopsis"><p>Updatet den Graph wenn ein neuer Zustand vom Zellautomaten berechnet wurde.term()</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
     <a href="#init/2">init(_, opts)</a>
   </div>
     <div class="summary-synopsis"><p>Initialisierung der Oberfläche</p></div>
@@ -136,7 +142,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">build_up(graph, x, y, xline, yline)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L123" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L119" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -164,7 +170,7 @@ Gibt diesen Graph zum Schluss zurrück</p>  </section>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">change_theme(list, map, g)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L166" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L162" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -186,7 +192,7 @@ Gibt diesen Graph zum Schluss zurrück</p>  </section>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">filter_event(event, from, scene_state)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L74" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L72" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -196,23 +202,42 @@ Gibt diesen Graph zum Schluss zurrück</p>  </section>
       <h2>Specs</h2>
       <div class="specs">
           <pre>filter_event({:click, z :: <a href="Zelle.html#t:t/0">Zelle.t</a>()}, from :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
-  {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}
-  | {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, new_g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}</pre>
+  {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}</pre>
           <pre>filter_event({:click, :next_step}, from :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
-  {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}
-  | {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, new_g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}</pre>
+  {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}</pre>
           <pre>filter_event({:click, :intervall}, from :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
   {:noreply, new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}</pre>
       </div>
 
 <p>Verarbeitet die Eingabe eines Buttons.</p><p><code class="inline">{:click, z::Zelle.t()}</code>
 Event auf dem Spielfeldraster.
-Zelle.t() wird dem Zellautomaten übergeben updatet die GUI</p><p><code class="inline">{:click, :next_step}</code>
-Lässt den Automaten den neuen Zustand berechnen und
-die GUI den neuen State annehmen.</p><p><code class="inline">{:click, :intervall}</code>
+Zelle.t() wird dem Zellautomaten übergeben.</p><p><code class="inline">{:click, :next_step}</code>
+Lässt den Automaten den neuen Zustand berechnen.</p><p><code class="inline">{:click, :intervall}</code>
 Gibt den Zellautomaten dass Signal automatisch weiter zu laufen
-oder aufzuhören. Updatete den Button entsprechend.
-Kein Update des Feldes.</p>  </section>
+oder aufzuhören. Updatete den Button entsprechend.</p>  </section>
+</section>
+<section class="detail" id="handle_info/2">
+  <div class="detail-header">
+    <a href="#handle_info/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">handle_info(arg1, state)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L103" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>handle_info({:new_map, map :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()}, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
+  {:noreply, new_stat :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>(), [{:push, g :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()}]}</pre>
+      </div>
+
+<p>Updatet den Graph wenn ein neuer Zustand vom Zellautomaten berechnet wurde.term()</p><p>Wartet auf eine Message vom Zellautomaten. Diese enthält einenen aktuellen Graphen.
+Der aktuelle Graph wird mit refrech_cell erstellt. Dieser wird anschießend angezeigt.</p>  </section>
 </section>
 <section class="detail" id="init/2">
   <div class="detail-header">
@@ -238,7 +263,7 @@ Kein Update des Feldes.</p>  </section>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">refrech_cell(graph, map)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L155" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L151" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>

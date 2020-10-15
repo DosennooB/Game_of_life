@@ -57,35 +57,33 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
 
   `{:click, z::Zelle.t()}`
   Event auf dem Spielfeldraster.
-  Zelle.t() wird dem Zellautomaten übergeben updatet die GUI
+  Zelle.t() wird dem Zellautomaten übergeben.
 
 
   `{:click, :next_step}`
-  Lässt den Automaten den neuen Zustand berechnen und
-  die GUI den neuen State annehmen.
+  Lässt den Automaten den neuen Zustand berechnen.
 
   `{:click, :intervall}`
   Gibt den Zellautomaten dass Signal automatisch weiter zu laufen
   oder aufzuhören. Updatete den Button entsprechend.
-  Kein Update des Feldes.
   """
-  @spec filter_event({:click , z ::Zelle.t()}, from ::pid(), state::term())
-  :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}|{:noreply, state::term(), [push: new_g::Scenic.Graph.t()]}
+  @spec filter_event({:click , z :: Zelle.t()}, from :: pid(), state :: term())
+  :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}
   def filter_event({:click, z = %Zelle{}}, _from, %{graph: g} = state) do
     send :zellautomat, {:toggel_cell, z, self()}
     {:noreply, state, push: g}
   end
 
-  @spec filter_event({:click , :next_step}, from ::pid(), state::term())
-  :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}|{:noreply, state::term(), [push: new_g::Scenic.Graph.t()]}
+  @spec filter_event({:click , :next_step}, from :: pid(), state :: term())
+  :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}
   def filter_event({:click, :next_step}, _from, %{graph: g} = state) do
     send :zellautomat, {:new_tick, self()}
     {:noreply, state, push: g}
   end
 
 
-  @spec filter_event({:click , :intervall}, from ::pid(), state::term())
-  :: {:noreply, new_state::term(), [push: g::Scenic.Graph.t()]}
+  @spec filter_event({:click , :intervall}, from :: pid(), state :: term())
+  :: {:noreply, new_state::term(), [push: g :: Scenic.Graph.t()]}
   def filter_event({:click, :intervall}, _from, %{graph: gr} = state) do
     send :zellautomat, {:automatic_tick, true, self()}
     {_t, text} = Graph.get!(gr, :intervall).data
@@ -94,6 +92,14 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
     {:noreply, new_state, push: g}
   end
 
+  @doc """
+  Updatet den Graph wenn ein neuer Zustand vom Zellautomaten berechnet wurde.term()
+
+  Wartet auf eine Message vom Zellautomaten. Diese enthält einenen aktuellen Graphen.
+  Der aktuelle Graph wird mit refrech_cell erstellt. Dieser wird anschießend angezeigt.
+  """
+  @spec handle_info({:new_map, map :: map()}, state :: term()) ::
+  {:noreply, new_stat :: term(), [push: g :: Scenic.Graph.t()]}
   def handle_info({:new_map, map}, %{graph: g} = state) do
     new_g = refrech_cell(g,map)
     new_state = Map.put(state, :graph , new_g)

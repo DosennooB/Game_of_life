@@ -4,7 +4,7 @@ defmodule GameOfLife.MixProject do
   def project do
     [
       app: :game_of_life,
-      version: "0.2.0",
+      version: "0.2.5",
       elixir: "~> 1.7",
       build_embedded: true,
       start_permanent: Mix.env() == :prod,

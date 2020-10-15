@@ -11,7 +11,6 @@ die ich mir im Vorhinein aufgeschrieben hatte.
 * 4.) Der Nutzer soll die Möglichkeit haben durch eine Eingabe den nächsten Zustand berechnen zu lassen.
 * 5.) Der Nutzer soll die Möglichkeit haben durch eine Eingabe die nächsten Zustände in einem Intervall berechnen zu lassen.
 
-Anforderung 5.) werde ich nicht ohne große Änderungen am Code umsetzte können.
 
 ## Auswahl der Programmiersprache
 
@@ -24,9 +23,9 @@ Projekt damit umsetzten könnte. Allerdings bin ich bei der Ausarbeitung auf Lim
 
 ## Struktur des Programms
 
-Das Programm besteht im weitesten Sinne aus einer Client-Serverarchitektur.
-Der Client hier die Nutzeroberfläche reagiert auf Nutzereingaben und schick diese als Elixir Massage
-an den Server weiter der diese Beantwortet.
+Das Programm besteht im weitesten Sinne aus Frontend und Backend.
+Das Frontend hier die Nutzeroberfläche reagiert auf Nutzereingaben und schick diese als Elixir Massage
+an den Server. Der Zellautomat ist in diesem Fall das Backend es verarbeitet Massages und berchnet den neuen Zustand. Das Frontend hat eine dedizierte callback Methode, die aufgerufen wird wenn der Zellautomat einen neuen Zustand errechnet hat.
 
 ### Besonderheiten der Nutzeroberfläche
 

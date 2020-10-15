@@ -75,6 +75,7 @@ def init() do
         t  = Agent.get(:xy, &Map.get(&1, :toggel))
         if t do
           tick()
+          send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
           Process.send_after(self() , {:automatic_tick, false, pid}, 1000)
         end
         automat()

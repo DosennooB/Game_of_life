@@ -73,30 +73,14 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
   :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}|{:noreply, state::term(), [push: new_g::Scenic.Graph.t()]}
   def filter_event({:click, z = %Zelle{}}, _from, %{graph: g} = state) do
     send :zellautomat, {:toggel_cell, z, self()}
-    receive do
-      {:new_map, map} ->
-        new_g = refrech_cell(g,map)
-        new_state = Map.put(state, :graph , new_g)
-        {:noreply, new_state, push: new_g}
-      after 0_500 ->
-        {:noreply, state, push: g}
-        IO.puts("test")
-    end
+    {:noreply, state, push: g}
   end
 
   @spec filter_event({:click , :next_step}, from ::pid(), state::term())
   :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}|{:noreply, state::term(), [push: new_g::Scenic.Graph.t()]}
   def filter_event({:click, :next_step}, _from, %{graph: g} = state) do
     send :zellautomat, {:new_tick, self()}
-    receive do
-      {:new_map, map} ->
-        new_g = refrech_cell(g,map)
-        new_state = Map.put(state, :graph , new_g)
-        {:noreply, new_state, push: new_g}
-      after 0_500 ->
-        {:noreply, state, push: g}
-        IO.puts("test")
-    end
+    {:noreply, state, push: g}
   end
 
 
@@ -108,6 +92,12 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
     g = run_stop(text, gr)
     new_state = Map.put(state, :graph , g)
     {:noreply, new_state, push: g}
+  end
+
+  def handle_info({:new_map, map}, %{graph: g} = state) do
+    new_g = refrech_cell(g,map)
+    new_state = Map.put(state, :graph , new_g)
+    {:noreply, new_state, push: new_g}
   end
 
 #Hilfsfunktion für Filterevent intervall

@@ -29,9 +29,8 @@ an den Server. Der Zellautomat ist in diesem Fall das Backend es verarbeitet Mas
 
 ### Besonderheiten der Nutzeroberfläche
 
-Das Feld des Zellautomaten in der Nutzeroberfläche ist mit Buttons realisiert.
-Jeder dieser Button hat als ID ein Struct vom Typ Zelle. Dieses wird auch im Server zur Adressierung
-genutzt. Es ist also keine spezielle zu Ordnung nötig.
+Das Feld des Zellautomaten in der Nutzeroberfläche ist über Primitive Rechtecke realisiert.
+Nach dem clicken in das Feld wird ein Struct der Zelle angefertigt, auf die geclickt wurde. Dieses wird auch im Server zur Adressierung genutzt. 
 
 ### Besonderheiten des Servers 
 

@@ -5,6 +5,8 @@ Das Programm ist in drei großen Punkten limitiert
 
 - **Dimension:** Durch die Nutzung von Buttons im Feld des Zellautomaten, ist das Programm in der Dimension beschränkt. Ab einer gewissen Zahl an Button stürzt das Grafik Framework ab.
 
+- Note: in v0.3.0 werde Primitive Rechtecke statt Buttons genutzt so ist es jetzt möglich eine größere Dimension zu nutzen.
+
 - **Aktualisierung:** Es ist mir kein Weg bekannt gewesen eine Callback Methode in der 
 Nutzeroberfläche zu implementieren. Dadurch kann der Server des Zellautomaten keine Aktualisierung
 der Nutzeroberfläche anstoßen.
@@ -20,7 +22,7 @@ Risiken. Vor allem, wenn Limitationen erst nach und nach bekannt werden.
 ## Änderungen
 Für eine Zukünftige weitere Entwicklung des Programms währen folgende Dinge möglich.
 
-- **Button ersetzen:** Um mehr Zellen in der Benutzeroberflächen anzeigen zu können. Müssen die Button durch z.B. Rechtecke (Rect) ersetzt werden. Diese können in höheren Stückzahlen erscheinen.
+- **Button ersetzen:** Um mehr Zellen in der Benutzeroberflächen anzeigen zu können. Müssen die Button durch z.B. Rechtecke (Rect) ersetzt werden. Diese können in höheren Stückzahlen erscheinen. (In v0.3.0 umgesetzt)
 
 - **Aktualisierung:** Eine Möglichkeit finden die einen Oberflächenaktualisierung in Intervallen ermöglicht. (In v0.2.5 behoben)
 

@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
-    <meta name="project" content="game_of_life v0.2.5">
-    <title>Anforderungen und Überlegungen — game_of_life v0.2.5</title>
+    <meta name="project" content="game_of_life v0.3.0">
+    <title>Anforderungen und Überlegungen — game_of_life v0.3.0</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-    <script src="dist/sidebar_items-54db03cc63.js"></script>
+    <script src="dist/sidebar_items-7bb3f6f104.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
@@ -43,7 +43,7 @@
       <a href="GameOfLife.html" class="sidebar-projectName">
 game_of_life      </a>
       <strong class="sidebar-projectVersion">
-        v0.2.5
+        v0.3.0
       </strong>
     </div>
   </div>
@@ -86,9 +86,8 @@ an den Server. Der Zellautomat ist in diesem Fall das Backend es verarbeitet Mas
   <a href="#besonderheiten-der-nutzeroberfläche" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Besonderheiten der Nutzeroberfläche
 </h3>
-<p>Das Feld des Zellautomaten in der Nutzeroberfläche ist mit Buttons realisiert.
-Jeder dieser Button hat als ID ein Struct vom Typ Zelle. Dieses wird auch im Server zur Adressierung
-genutzt. Es ist also keine spezielle zu Ordnung nötig.</p><h3 id="besonderheiten-des-servers" class="section-heading">
+<p>Das Feld des Zellautomaten in der Nutzeroberfläche ist über Primitive Rechtecke realisiert.
+Nach dem clicken in das Feld wird ein Struct der Zelle angefertigt, auf die geclickt wurde. Dieses wird auch im Server zur Adressierung genutzt. </p><h3 id="besonderheiten-des-servers" class="section-heading">
   <a href="#besonderheiten-des-servers" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Besonderheiten des Servers
 </h3>

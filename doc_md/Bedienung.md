@@ -8,8 +8,7 @@ Das Besteht aus zwei verschiedenen Ansichten.
 
 In der ersten Ansicht wird die Dimension ausgewählt, die nachher
 der Zellautomat haben soll. Dazu wird in den jeweiligen Textfeldern
-die entsprechende Zahl eingetragen. Aktuell werden nicht mehr als eine 
-Dimension von 20x20 unterstützt.
+die entsprechende Zahl eingetragen. 
 
 ## Das Feld
 

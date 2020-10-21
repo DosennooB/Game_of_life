@@ -25,7 +25,6 @@ defmodule GameOfLife.Scene.Home do
     |> text_field("20", id: :reihe, filter: :number,  translate: {200,480-@text_size})
     |> text("Spalte", font_size: @text_size,translate: {400, 480-@text_size * 2})
     |> text_field("20", id: :spalte, filter: :number,  translate: {400,480-@text_size})
-    |> text("Wichtig maximal Wert ist 20", id: :text, font_size: 24, translate: {200, 480})
     |> button("Starten", id: :start, width: 400 ,button_font_size: @text_size, translate: {200,480+@text_size})
 
   # --------------------------------------------------------
@@ -59,8 +58,8 @@ defmodule GameOfLife.Scene.Home do
     %{spalte: spalte} = state
     %{reihe: reihe} = state
     zellautomat_pid = spawn(fn -> Zellautomat.init() end)
-    spalte_int = min(20, String.to_integer(spalte)) #Um in aktueller Version dimension nicht zu groß werden zu lassen
-    reihe_int = min(20, String.to_integer(reihe))
+    spalte_int = max(1, String.to_integer(spalte)) #Um in aktueller Version dimension nicht zu groß werden zu lassen
+    reihe_int = max(1, String.to_integer(reihe))
     send zellautomat_pid,{:set_xy, reihe_int, spalte_int}
     %{viewport: vp} = state
     s = GameOfLife.Scene.Field

@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
-    <meta name="project" content="game_of_life v0.2.5">
-    <title>Kritik und Änderungen — game_of_life v0.2.5</title>
+    <meta name="project" content="game_of_life v0.3.0">
+    <title>Kritik und Änderungen — game_of_life v0.3.0</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-    <script src="dist/sidebar_items-54db03cc63.js"></script>
+    <script src="dist/sidebar_items-7bb3f6f104.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
@@ -43,7 +43,7 @@
       <a href="GameOfLife.html" class="sidebar-projectName">
 game_of_life      </a>
       <strong class="sidebar-projectVersion">
-        v0.2.5
+        v0.3.0
       </strong>
     </div>
   </div>
@@ -66,7 +66,7 @@ game_of_life      </a>
   <a href="#limitationen" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Limitationen
 </h2>
-<p>Das Programm ist in drei großen Punkten limitiert</p><ul><li><p><strong>Dimension:</strong> Durch die Nutzung von Buttons im Feld des Zellautomaten, ist das Programm in der Dimension beschränkt. Ab einer gewissen Zahl an Button stürzt das Grafik Framework ab.</p></li><li><p><strong>Aktualisierung:</strong> Es ist mir kein Weg bekannt gewesen eine Callback Methode in der 
+<p>Das Programm ist in drei großen Punkten limitiert</p><ul><li><p><strong>Dimension:</strong> Durch die Nutzung von Buttons im Feld des Zellautomaten, ist das Programm in der Dimension beschränkt. Ab einer gewissen Zahl an Button stürzt das Grafik Framework ab.</p></li><li><p>Note: in v0.3.0 werde Primitive Rechtecke statt Buttons genutzt so ist es jetzt möglich eine größere Dimension zu nutzen.</p></li><li><p><strong>Aktualisierung:</strong> Es ist mir kein Weg bekannt gewesen eine Callback Methode in der 
 Nutzeroberfläche zu implementieren. Dadurch kann der Server des Zellautomaten keine Aktualisierung
 der Nutzeroberfläche anstoßen.</p></li><li><p>Note: in v0.2.5 kann der Zellautomat auch die Nutzeroberfläche aktualisieren.</p></li><li><p><strong>Anpassbarkeit</strong> Das Programm ist nur auf eine Fenstergröße ausgerichtet. Diese kann nicht verändert werden.</p></li></ul><h2 id="kritik" class="section-heading">
   <a href="#kritik" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
@@ -77,7 +77,7 @@ Risiken. Vor allem, wenn Limitationen erst nach und nach bekannt werden.</p><h2 
   <a href="#änderungen" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Änderungen
 </h2>
-<p>Für eine Zukünftige weitere Entwicklung des Programms währen folgende Dinge möglich.</p><ul><li><p><strong>Button ersetzen:</strong> Um mehr Zellen in der Benutzeroberflächen anzeigen zu können. Müssen die Button durch z.B. Rechtecke (Rect) ersetzt werden. Diese können in höheren Stückzahlen erscheinen.</p></li><li><p><strong>Aktualisierung:</strong> Eine Möglichkeit finden die einen Oberflächenaktualisierung in Intervallen ermöglicht. (In v0.2.5 behoben)</p></li><li><p><strong>Testerweiterung:</strong> Die Tests in der aktuellen Version decken nur einen kleinen Teil des Programms ab.
+<p>Für eine Zukünftige weitere Entwicklung des Programms währen folgende Dinge möglich.</p><ul><li><p><strong>Button ersetzen:</strong> Um mehr Zellen in der Benutzeroberflächen anzeigen zu können. Müssen die Button durch z.B. Rechtecke (Rect) ersetzt werden. Diese können in höheren Stückzahlen erscheinen. (In v0.3.0 umgesetzt)</p></li><li><p><strong>Aktualisierung:</strong> Eine Möglichkeit finden die einen Oberflächenaktualisierung in Intervallen ermöglicht. (In v0.2.5 behoben)</p></li><li><p><strong>Testerweiterung:</strong> Die Tests in der aktuellen Version decken nur einen kleinen Teil des Programms ab.
 Diese sollten in Zukunft ausgebaut werden.</p></li><li><p><strong>Fensteränderung:</strong> Zukünftig sollte man in der ersten Ansicht die Möglichkeit haben die Größe des Fensters einzustellen oder zumindest einen Skalierungsfaktor zu nutzen. </p></li></ul>      <footer class="footer">
         <p>
           <span class="line">

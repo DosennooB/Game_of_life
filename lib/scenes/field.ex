@@ -4,6 +4,7 @@ defmodule GameOfLife.Scene.Field do
 
   alias Scenic.Graph
   import Scenic.Components
+  import Scenic.Primitives
 
   @text_size 64
   @offset 50
@@ -42,22 +43,20 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
     Process.sleep(300)
     xline = Agent.get(:xy, &Map.get(&1, :x))
     yline = Agent.get(:xy, &Map.get(&1, :y))
-
-    g = build_up(@graph, xline, yline, xline, yline)
     state = %{
-      graph: g,
+      graph: @graph,
+      xline: xline,
+      yline: yline,
+      map: %{},
       viewport: opts[:viewport]
     }
+    g = build_rect(@graph, xline, yline, xline, yline, %{})
     {:ok, state, push: g}
 
   end
 
  @doc """
   Verarbeitet die Eingabe eines Buttons.
-
-  `{:click, z::Zelle.t()}`
-  Event auf dem Spielfeldraster.
-  Zelle.t() wird dem Zellautomaten übergeben.
 
 
   `{:click, :next_step}`
@@ -67,44 +66,81 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
   Gibt den Zellautomaten dass Signal automatisch weiter zu laufen
   oder aufzuhören. Updatete den Button entsprechend.
   """
-  @spec filter_event({:click , z :: Zelle.t()}, from :: pid(), state :: term())
-  :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}
-  def filter_event({:click, z = %Zelle{}}, _from, %{graph: g} = state) do
-    send :zellautomat, {:toggel_cell, z, self()}
-    {:noreply, state, push: g}
-  end
 
   @spec filter_event({:click , :next_step}, from :: pid(), state :: term())
   :: {:noreply, state::term(), [push: g::Scenic.Graph.t()]}
-  def filter_event({:click, :next_step}, _from, %{graph: g} = state) do
+  def filter_event({:click, :next_step}, _from, state) do
     send :zellautomat, {:new_tick, self()}
-    {:noreply, state, push: g}
+    {:noreply, state}
   end
 
 
   @spec filter_event({:click , :intervall}, from :: pid(), state :: term())
   :: {:noreply, new_state::term(), [push: g :: Scenic.Graph.t()]}
   def filter_event({:click, :intervall}, _from, %{graph: gr} = state) do
+    %{xline: xline} = state
+    %{yline: yline} = state
+    %{map: map} = state
     send :zellautomat, {:automatic_tick, true, self()}
+
     {_t, text} = Graph.get!(gr, :intervall).data
     g = run_stop(text, gr)
+    g_new = build_rect(g,xline, yline, xline, yline, map)
+
     new_state = Map.put(state, :graph , g)
-    {:noreply, new_state, push: g}
+
+    {:noreply, new_state, push: g_new}
+  end
+
+
+  @doc """
+  Ändert den Zustand der Zelle auf die geclickt wurde.
+
+  Berrechnet ob der click auf dem Zellgitter getätigt wurde
+  und berechnet die Zelle auf der die Interaktion statt fand.
+  """
+  @spec handle_input({:cursor_button, {:left, :press, 0, {xposo :: pos_integer(), ypos :: pos_integer()}}}, context :: Scenic.ViewPort.Context.t(), state :: term())
+  :: {:noreply, state :: term()}
+  def handle_input({:cursor_button, {:left, :press, 0, {xposo, ypos}}}, _context, state) do
+    xpos = xposo - @offset
+    if 0 <= xpos and xpos < @tile_field and 0 <= ypos and ypos < @tile_field do
+      %{xline: xline} = state
+      %{yline: yline} = state
+      x = ceil(xpos/(@tile_field/xline))
+      y = ceil(ypos/(@tile_field/yline))
+      z = %Zelle{
+        x: x,
+        y: y
+      }
+      send :zellautomat, {:toggel_cell, z, self()}
+    end
+    {:noreply, state}
+  end
+
+
+  def handle_input(_event, _context, state) do
+    {:noreply, state}
   end
 
   @doc """
-  Updatet den Graph wenn ein neuer Zustand vom Zellautomaten berechnet wurde.term()
+  Updatet den Graph wenn ein neuer Zustand vom Zellautomaten berechnet wurde.
 
   Wartet auf eine Message vom Zellautomaten. Diese enthält einenen aktuellen Graphen.
-  Der aktuelle Graph wird mit refrech_cell erstellt. Dieser wird anschießend angezeigt.
+  Der aktuelle Graph wird mit build_rect erstellt. Dieser wird anschießend angezeigt.
+  übergibt den State die neuen dimensionen und den Zustand des Zellautomaten.
   """
   @spec handle_info({:new_map, map :: map()}, state :: term()) ::
   {:noreply, new_stat :: term(), [push: g :: Scenic.Graph.t()]}
   def handle_info({:new_map, map}, %{graph: g} = state) do
-    new_g = refrech_cell(g,map)
-    new_state = Map.put(state, :graph , new_g)
+    xline = Agent.get(:xy,  &Map.get(&1, :x))
+    yline = Agent.get(:xy, &Map.get(&1, :y))
+    new_g = build_rect(g,xline, yline, xline, yline, map)
+    new_state = Map.put(state, :xline , xline)
+      |>Map.put(:yline, yline)
+      |>Map.put(:map, map)
     {:noreply, new_state, push: new_g}
   end
+
 
 #Hilfsfunktion für Filterevent intervall
   defp run_stop(text, gr)do
@@ -115,66 +151,38 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
     end
   end
 
+
   @doc false
-  def build_up(graph, 0, 1, _xline, _yline)do
+  def build_rect(graph, 0, 1, _xline, _yline, _map)do
     graph
   end
 
   @doc false
-  def build_up(graph, 0, y, xline, yline)do
-    build_up(graph,xline,y-1,xline, yline)
+  def build_rect(graph, 0, y, xline, yline, map)do
+    build_rect(graph, xline, y-1, xline, yline, map)
   end
 
   @doc """
-  Baut das Zellgitter gemäß den Dimensionen auf.
+  Baut das Zellgitter mit den jeweiligen state des Zellautomaten auf.
 
-  Funktion erstellt buttons in passenden Größen und Positionen.
-  Gibt diesen Graph zum Schluss zurrück
+  Funktion erstellt Rechtecke in passenden Größen und Positionen gemäß des State des Zellautomaten.
   """
-  @spec build_up(graph :: Scenic.Graph.t(), x :: pos_integer(), y :: pos_integer(), xline :: pos_integer(), yline :: pos_integer()) :: Scenic.Graph.t()
-  def build_up(graph =%Graph{}, x, y, xline, yline)do
+  @spec build_rect(graph :: Scenic.Graph.t(), x :: pos_integer(), y :: pos_integer(), xline :: pos_integer(), yline :: pos_integer(), map :: map()) :: Scenic.Graph.t()
+  def build_rect(graph =%Graph{},x, y, xline, yline, map)do
     z = %Zelle{
       x: x,
       y: y
     }
-    g = graph
-    |>button("", id: z,theme: :dark, height: @tile_field / yline, width: @tile_field / xline, t: {@tile_field / xline * (x-1) +@offset, @tile_field / yline * (y-1)} )
-    build_up(g,x-1,y,xline, yline)
+    n = Map.get(map, z, 0)
+    cond do
+      n == 1 ->
+        g = graph
+        |>rect({@tile_field/xline, @tile_field/yline}, fill: :black, translate: {@tile_field / xline * (x-1) + @offset, @tile_field / yline * (y-1)})
+        build_rect(g, x-1, y, xline, yline, map)
+      true ->
+        g = graph
+        |>rect({@tile_field/xline, @tile_field/yline}, fill: :white, stroke: {1, :black}, translate: {@tile_field / xline * (x-1) + @offset, @tile_field / yline * (y-1)})
+        build_rect(g, x-1, y, xline, yline, map)
+    end
   end
-
-   @doc """
-   Extrahiert Ids aus dem Graph#
-
-   Mit diesen Ids wird change_theme() aufgerufen.
-   """
-  @spec refrech_cell(graph :: Scenic.Graph.t(), map :: map()) :: Scenic.Graph.t()
-   def refrech_cell(graph =%Graph{} , map)do
-    id = Map.keys(graph.ids)
-    change_theme(id, map, graph)
-  end
-
-  @doc """
-  Passt den Zustand der Zellen an
-
-  Ändert das Aussehen der Zellen so das sie dem neuen Zustand des Automaten enstsprechen.
-  """
-  @spec change_theme(id :: list(), map :: map(), g :: Scenic.Graph.t()) :: Scenic.Graph.t()
-  def change_theme([],_map, g)do
-    g
-  end
-  def change_theme([id= %Zelle{}|idtail], map, g)do
-      wert = Map.get(map,id)
-      if wert == 1 do
-        #new_g = Graph.modify(g, id, fn  %{styles: st} = x -> %{x | styles: Map.put(st,:theme, :danger)}end)
-        new_g = Graph.modify(g, id, &button(&1, "Hallo")) #schnelle Lösung
-        change_theme(idtail, map, new_g)
-      else
-        new_g = Graph.modify(g, id, &button(&1, ""))
-        change_theme(idtail, map, new_g)
-      end
-  end
-  def change_theme([_id|idtail], map, g) do
-    change_theme(idtail, map, g)
-  end
-
 end

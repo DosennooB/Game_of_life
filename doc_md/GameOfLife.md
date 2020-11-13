@@ -10,3 +10,4 @@ als Grafik Framework.
 * [Bedienung](bedienung.html)
 * [Anforderungen und Überlegungen](anforderungen.html)
 * [Kritik und Änderungen](kritikundänderungen.html)
+* [Changelog](changelog.html)

@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
-    <meta name="project" content="game_of_life v0.3.0">
-    <title>GameOfLife.Scene.Field — game_of_life v0.3.0</title>
+    <meta name="project" content="game_of_life v0.3.1">
+    <title>GameOfLife.Scene.Field — game_of_life v0.3.1</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-    <script src="dist/sidebar_items-7bb3f6f104.js"></script>
+    <script src="dist/sidebar_items-9aaeab5080.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
@@ -43,7 +43,7 @@
       <a href="GameOfLife.html" class="sidebar-projectName">
 game_of_life      </a>
       <strong class="sidebar-projectVersion">
-        v0.3.0
+        v0.3.1
       </strong>
     </div>
   </div>
@@ -63,7 +63,7 @@ game_of_life      </a>
     <div id="content" class="content-inner">
 
       <h1>
-        GameOfLife.Scene.Field <small class="app-vsn">(game_of_life v0.3.0)</small>
+        GameOfLife.Scene.Field <small class="app-vsn">(game_of_life v0.3.1)</small>
           <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
             <span class="sr-only">View Source</span>
@@ -90,9 +90,27 @@ Durch &quot;run&quot; wird der der Zelleautomat angegewiesen in Intervallen sein
     </h2>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#build_rect/6">build_rect(graph, x, y, xline, yline, map)</a>
+    <a href="#build_lines_h/3">build_lines_h(graph, y, yline)</a>
+  </div>
+    <div class="summary-synopsis"><p>Zeichent horizontale Linien</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#build_lines_v/3">build_lines_v(graph, x, xline)</a>
+  </div>
+    <div class="summary-synopsis"><p>Zeichent vertikale Linien</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#build_rect/4">build_rect(graph, xline, yline, map)</a>
   </div>
     <div class="summary-synopsis"><p>Baut das Zellgitter mit den jeweiligen state des Zellautomaten auf.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#fill_rect/4">fill_rect(graph, xline, yline, list)</a>
+  </div>
+    <div class="summary-synopsis"><p>Zeichnet die aktiven Zellen.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
@@ -129,14 +147,64 @@ Durch &quot;run&quot; wird der der Zelleautomat angegewiesen in Intervallen sein
             </a>
 Functions          </h1>
           <div class="functions-list">
-<section class="detail" id="build_rect/6">
+<section class="detail" id="build_lines_h/3">
   <div class="detail-header">
-    <a href="#build_rect/6" class="detail-link" title="Link to this function">
+    <a href="#build_lines_h/3" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">build_rect(graph, x, y, xline, yline, map)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L156" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">build_lines_h(graph, y, yline)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L199" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>build_lines_h(
+  graph :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>(),
+  y :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
+  yline :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()
+) :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()</pre>
+      </div>
+
+<p>Zeichent horizontale Linien</p><p>Die Linien erzeugen die passenden Rechtecke die dem State des Zellautomaten passen.</p>  </section>
+</section>
+<section class="detail" id="build_lines_v/3">
+  <div class="detail-header">
+    <a href="#build_lines_v/3" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">build_lines_v(graph, x, xline)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L216" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>build_lines_v(
+  graph :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>(),
+  x :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
+  xline :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()
+) :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()</pre>
+      </div>
+
+<p>Zeichent vertikale Linien</p><p>Die Linien erzeugen die passenden Rechtecke die dem State des Zellautomaten passen.</p>  </section>
+</section>
+<section class="detail" id="build_rect/4">
+  <div class="detail-header">
+    <a href="#build_rect/4" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">build_rect(graph, xline, yline, map)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L162" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -147,15 +215,39 @@ Functions          </h1>
       <div class="specs">
           <pre>build_rect(
   graph :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>(),
-  x :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  y :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   xline :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   yline :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   map :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()
 ) :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()</pre>
       </div>
 
-<p>Baut das Zellgitter mit den jeweiligen state des Zellautomaten auf.</p><p>Funktion erstellt Rechtecke in passenden Größen und Positionen gemäß des State des Zellautomaten.</p>  </section>
+<p>Baut das Zellgitter mit den jeweiligen state des Zellautomaten auf.</p><p>Ruft Funktionen für das erstellen des Gitters und zeichnen der aktiven Zellen auf.</p>  </section>
+</section>
+<section class="detail" id="fill_rect/4">
+  <div class="detail-header">
+    <a href="#fill_rect/4" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">fill_rect(graph, xline, yline, list)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L171" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>fill_rect(
+  graph :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>(),
+  xline :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
+  yline :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
+  <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">list</a>()
+) :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()</pre>
+      </div>
+
+<p>Zeichnet die aktiven Zellen.</p><p>Die Zellen in der Liste werden schwarz gezeichnet.</p>  </section>
 </section>
 <section class="detail" id="filter_event/3">
   <div class="detail-header">

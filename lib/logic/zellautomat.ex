@@ -21,15 +21,11 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
 @spec init :: no_return()
 def init() do
     Process.register(self(), :zellautomat)
-    receive do
-      {:set_xy, x,y} ->
-        Agent.start_link(fn-> %{:x=>x, :y=> y, :toggel => false} end, name: :xy)
-        Agent.start_link(fn -> %{} end, name: :akt_map)
-        Agent.start_link(fn -> %{} end, name: :new_map)
-        Agent.start_link(fn -> [] end, name: :todo)
-        automat()
-
-    end
+    Agent.start_link(fn-> %{:x=>20, :y=> 20, :toggel => false} end, name: :xy)
+    Agent.start_link(fn -> %{} end, name: :akt_map)
+    Agent.start_link(fn -> %{} end, name: :new_map)
+    Agent.start_link(fn -> [] end, name: :todo)
+    automat()
   end
 
   @doc """
@@ -51,6 +47,10 @@ def init() do
   Alle n Sekunden wird ein neuer Zustand der Zellautomaten berechnet.
   Durch den Parameter toggle kann diese Funktion an oder ausgeschaltet werden.
   Gibt den neuen Zustand zurück.
+
+  - **set_xy:**
+  Die Dimensionen des Zellautomaten werden neu gesetzt.
+  Kann wärend des Laufenden Programmes geschehen.
   """
   @spec automat :: no_return()
   def automat() do
@@ -78,6 +78,11 @@ def init() do
           send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
           Process.send_after(self() , {:automatic_tick, false, pid}, 1000)
         end
+        automat()
+
+      {:set_xy, x,y} ->
+        Agent.update(:xy, &Map.put(&1, :x, x))
+        Agent.update(:xy, &Map.put(&1, :y, y))
         automat()
       end
   end

@@ -39,18 +39,13 @@ Initialisierung der Oberfläche
 Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
 """
   def init(_, opts) do
-    ##Damit die Agent gestartet werden können (nicht gut) //TODO
-    Process.sleep(300)
-    xline = Agent.get(:xy, &Map.get(&1, :x))
-    yline = Agent.get(:xy, &Map.get(&1, :y))
+
     state = %{
       graph: @graph,
-      xline: xline,
-      yline: yline,
       map: %{},
       viewport: opts[:viewport]
     }
-    g = build_rect(@graph, xline, yline, %{})
+    g = build_rect(@graph, %{})
     {:ok, state, push: g}
 
   end
@@ -78,14 +73,12 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
   @spec filter_event({:click , :intervall}, from :: pid(), state :: term())
   :: {:noreply, new_state::term(), [push: g :: Scenic.Graph.t()]}
   def filter_event({:click, :intervall}, _from, %{graph: gr} = state) do
-    %{xline: xline} = state
-    %{yline: yline} = state
     %{map: map} = state
     send :zellautomat, {:automatic_tick, true, self()}
 
     {_t, text} = Graph.get!(gr, :intervall).data
     g = run_stop(text, gr)
-    g_new = build_rect(g, xline, yline, map)
+    g_new = build_rect(g, map)
 
     new_state = Map.put(state, :graph , g)
 
@@ -104,8 +97,8 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
   def handle_input({:cursor_button, {:left, :press, 0, {xposo, ypos}}}, _context, state) do
     xpos = xposo - @offset
     if 0 <= xpos and xpos < @tile_field and 0 <= ypos and ypos < @tile_field do
-      %{xline: xline} = state
-      %{yline: yline} = state
+      xline = Agent.get(:xy, &Map.get(&1, :x))
+      yline = Agent.get(:xy, &Map.get(&1, :y))
       x = ceil(xpos/(@tile_field/xline))
       y = ceil(ypos/(@tile_field/yline))
       z = %Zelle{
@@ -127,17 +120,13 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
 
   Wartet auf eine Message vom Zellautomaten. Diese enthält einenen aktuellen Graphen.
   Der aktuelle Graph wird mit build_rect erstellt. Dieser wird anschießend angezeigt.
-  übergibt den State die neuen dimensionen und den Zustand des Zellautomaten.
+  übergibt den State den neuen Zustand des Zellautomaten.
   """
   @spec handle_info({:new_map, map :: map()}, state :: term()) ::
   {:noreply, new_stat :: term(), [push: g :: Scenic.Graph.t()]}
   def handle_info({:new_map, map}, %{graph: g} = state) do
-    xline = Agent.get(:xy,  &Map.get(&1, :x))
-    yline = Agent.get(:xy, &Map.get(&1, :y))
-    new_g = build_rect(g, xline, yline, map)
-    new_state = Map.put(state, :xline , xline)
-      |>Map.put(:yline, yline)
-      |>Map.put(:map, map)
+    new_g = build_rect(g, map)
+    new_state = Map.put(state, :map, map)
     {:noreply, new_state, push: new_g}
   end
 
@@ -158,8 +147,10 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
 
   Ruft Funktionen für das erstellen des Gitters und zeichnen der aktiven Zellen auf.
   """
-  @spec build_rect(graph :: Scenic.Graph.t(), xline :: pos_integer(), yline :: pos_integer(), map :: map()) :: Scenic.Graph.t()
-  def build_rect(graph, xline, yline, map)do
+  @spec build_rect(graph :: Scenic.Graph.t(), map :: map()) :: Scenic.Graph.t()
+  def build_rect(graph, map)do
+    xline = Agent.get(:xy, &Map.get(&1, :x))
+    yline = Agent.get(:xy, &Map.get(&1, :y))
     graph
     |>rect({@tile_field, @tile_field}, fill: :white, translate: {@offset, 0})
     |>build_lines_h(yline, yline)

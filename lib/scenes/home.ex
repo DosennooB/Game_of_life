@@ -30,7 +30,7 @@ defmodule GameOfLife.Scene.Home do
   # --------------------------------------------------------
 
   def init(_, opts) do
-
+    spawn(fn -> Zellautomat.init() end)
     state = %{
       graph: @graph,
       reihe: "20",
@@ -57,10 +57,9 @@ defmodule GameOfLife.Scene.Home do
   def filter_event({:click, :start}, _from, state) do
     %{spalte: spalte} = state
     %{reihe: reihe} = state
-    zellautomat_pid = spawn(fn -> Zellautomat.init() end)
     spalte_int = max(1, String.to_integer(spalte)) #Um in aktueller Version dimension nicht zu groß werden zu lassen
     reihe_int = max(1, String.to_integer(reihe))
-    send zellautomat_pid,{:set_xy, reihe_int, spalte_int}
+    send :zellautomat,{:set_xy, reihe_int, spalte_int}
     %{viewport: vp} = state
     s = GameOfLife.Scene.Field
     ViewPort.set_root(vp, {s, nil})

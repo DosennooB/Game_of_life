@@ -105,7 +105,7 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
         x: x,
         y: y
       }
-      send :zellautomat, {:toggel_cell, z, self()}
+      send :zellautomat, {:toggel_cell, [z], self()}
     end
     {:noreply, state}
   end

@@ -21,7 +21,7 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
 @spec init :: no_return()
 def init() do
     Process.register(self(), :zellautomat)
-    Agent.start_link(fn-> %{:x=>20, :y=> 20, :toggel => false} end, name: :xy)
+    Agent.start_link(fn-> %{:x=>20, :y=> 20, :toggel => false, :torisch => false} end, name: :xy)
     Agent.start_link(fn -> %{} end, name: :akt_map)
     Agent.start_link(fn -> %{} end, name: :new_map)
     Agent.start_link(fn -> [] end, name: :todo)
@@ -37,7 +37,8 @@ def init() do
 
   - **toggel_cell:**
   Es kann geziehlt eine Zelle an oder aus geschaltet werden,
-  abhängig von ihrem aktuellen Zustand.
+  abhängig von ihrem aktuellen Zustand. Es können mehrere Zellen gleichzeitig
+  verändert werden.
 
 
   - **new_tick:**
@@ -55,10 +56,13 @@ def init() do
   @spec automat :: no_return()
   def automat() do
     receive do
-      {:toggel_cell, zelle = %Zelle{}, pid} ->
-        Agent.update(:akt_map, fn map ->
-          Map.update(map, zelle, 1 , &(rem(&1+1,2)))
+      {:toggel_cell, z , pid} ->
+        Enum.map(z, fn zelle ->
+          Agent.update(:akt_map, fn map ->
+            Map.update(map, zelle, 1 , &(rem(&1+1,2)))
+          end)
         end)
+
         send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
         automat()
 
@@ -118,28 +122,36 @@ def init() do
   def todo_zellen_around(zelle = %Zelle{}) do
     xline = Agent.get(:xy, &Map.get(&1, :x))
     yline = Agent.get(:xy, &Map.get(&1, :y))
-    todo_zellen_around( xline, yline, [1,1,1,0,0,0,-1,-1,-1],[1,0,-1,1,0,-1,1,0,-1] ,zelle)
+    torisch = Agent.get(:xy, &Map.get(&1, :torisch))
+    todo_zellen_around( xline, yline, [1,1,1,0,0,0,-1,-1,-1],[1,0,-1,1,0,-1,1,0,-1] ,zelle, torisch)
   end
 
   @doc false
-  def todo_zellen_around( _xline, _yline, [], [], _k) do
+  def todo_zellen_around( _xline, _yline, [], [], _k, _torisch) do
     :ok
   end
 
   @doc false
-  def todo_zellen_around( xline, yline, [hx|tx], [hy|ty], k) do
+  def todo_zellen_around( xline, yline, [hx|tx], [hy|ty], k, torisch) do
     x = hx + k.x
     y = hy + k.y
     cond do
-      0 < x and x <= xline and 0 < y and y <= yline ->
+      torisch == false and 0 < x and x <= xline and 0 < y and y <= yline ->
         nzelle = %Zelle{
           x: x,
           y: y
         }
         Agent.update(:todo, fn list -> [nzelle|list] end)
-        todo_zellen_around( xline, yline, tx, ty, k)
+        todo_zellen_around( xline, yline, tx, ty, k, torisch)
+      torisch == true ->
+        nzelle = %Zelle{
+          x: torus_func(x, xline),
+          y: torus_func(y, yline)
+        }
+        Agent.update(:todo, fn list -> [nzelle|list] end)
+        todo_zellen_around( xline, yline, tx, ty, k, torisch)
       true ->
-        todo_zellen_around( xline, yline, tx, ty, k)
+        todo_zellen_around( xline, yline, tx, ty, k, torisch)
       end
   end
 
@@ -154,7 +166,8 @@ def init() do
   def alive_in_new_map(k = %Zelle{}) do
     xline = Agent.get(:xy, &Map.get(&1, :x))
     yline = Agent.get(:xy, &Map.get(&1, :y))
-    wert =  around_wert(0, xline,yline, [1,1,1,0,0,-1,-1,-1],[1,0,-1,1,-1,1,0,-1] ,k)
+    torisch = Agent.get(:xy, &Map.get(&1, :torisch))
+    wert =  around_wert(0, xline,yline, [1,1,1,0,0,-1,-1,-1],[1,0,-1,1,-1,1,0,-1] ,k, torisch)
     zellenwert = Agent.get(:akt_map, &Map.get_lazy(&1, k, fn -> 0 end))
     cond do
       zellenwert == 1 ->
@@ -177,24 +190,50 @@ def init() do
 
   Berechnet die Summe der Umligenden Zellen und gibt diese zurück.
   """
-  @spec around_wert(wert :: pos_integer(), xline :: pos_integer(), yline :: pos_integer(), list1 :: list(), list2 :: list(), k :: Zelle.t()) :: pos_integer()
-  def around_wert(wert, _xline, _yline, [], [], _k) do
-     wert
+  @spec around_wert(wert :: pos_integer(), xline :: pos_integer(), yline :: pos_integer(), list1 :: list(), list2 :: list(), k :: Zelle.t(), torisch :: boolean()) :: pos_integer()
+  def around_wert(wert, _xline, _yline, [], [], _k, _torisch) do
+    wert
   end
 
-  def around_wert(wert, xline, yline, [hx|tx], [hy|ty], k = %Zelle{}) do
+  def around_wert(wert, xline, yline, [hx|tx], [hy|ty], k = %Zelle{}, torisch) do
      x = hx + k.x
      y = hy + k.y
     cond do
-      0 < x  and x <= xline and 0 < y and y <= yline ->
+      torisch == false and 0 < x  and x <= xline and 0 < y and y <= yline ->
         nachtbar = %Zelle{
           x: x,
           y: y
         }
         Agent.get(:akt_map, &Map.get_lazy(&1, nachtbar, fn -> 0 end)) + wert
-        |>around_wert(xline, yline,tx,ty,k)
+        |>around_wert(xline, yline,tx,ty,k,torisch)
+
+      torisch == true ->
+        nachtbar = %Zelle{
+          x: torus_func(x, xline),
+          y: torus_func(y, yline)
+        }
+        IO.inspect(nachtbar)
+        Agent.get(:akt_map, &Map.get_lazy(&1, nachtbar, fn -> 0 end)) + wert
+        |>around_wert(xline, yline,tx,ty,k,torisch)
+
       true ->
-        around_wert(wert, xline, yline, tx, ty, k)
+        around_wert(wert, xline, yline, tx, ty, k, torisch)
+    end
+  end
+
+  @doc """
+  Setzt eine Zelle auseherhalb der Dimension in den Torischen Bereich
+
+  """
+  @spec torus_func(wert :: pos_integer(), dimension :: pos_integer()) :: pos_integer()
+  def torus_func(wert, dimension) do
+    cond do
+      wert <= 0 ->
+        wert+ dimension
+      wert > dimension ->
+        wert - dimension
+      true ->
+        wert
     end
   end
 end

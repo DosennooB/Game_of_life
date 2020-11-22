@@ -30,7 +30,6 @@ defmodule GameOfLife.Scene.Home do
   # --------------------------------------------------------
 
   def init(_, opts) do
-    spawn(fn -> Zellautomat.init() end)
     state = %{
       graph: @graph,
       reihe: "20",

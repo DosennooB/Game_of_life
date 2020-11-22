@@ -11,8 +11,6 @@ defmodule GameOfLife.MixProject do
       deps: deps(),
 
       # Docs
-      #name: "GameOfLife",
-      #main: "GameOfLife",
       source_url: "https://github.com/DosennooB/Game_of_life",
       docs: [
         main: "GameOfLife", # The main page in the docs

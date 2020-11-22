@@ -13,6 +13,14 @@ Die nötigen Paarameter werden in Agents gespeichert.
 """
 
 
+def child_spec(_opts) do
+  %{
+    id: __MODULE__,
+    start: {__MODULE__, :init, []}
+  }
+end
+
+
 @doc """
 Initialisierung des Automaten.
 
@@ -56,6 +64,7 @@ def init() do
   @spec automat :: no_return()
   def automat() do
     receive do
+      #z ist eine Liste aus Zellen
       {:toggel_cell, z , pid} ->
         Enum.map(z, fn zelle ->
           Agent.update(:akt_map, fn map ->

@@ -1,4 +1,5 @@
 defmodule Zellautomat do
+  use GenServer
 @moduledoc """
 Logic des Zellautomaten.
 Die nötigen Paarameter werden in Agents gespeichert.
@@ -13,29 +14,24 @@ Die nötigen Paarameter werden in Agents gespeichert.
 """
 
 
-def child_spec(_opts) do
-  %{
-    id: __MODULE__,
-    start: {__MODULE__, :init, []}
-  }
-end
-
 
 @doc """
 Initialisierung des Automaten.
 
 Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
 """
-@spec init :: no_return()
-def init() do
-    Process.register(self(), :zellautomat)
-    Agent.start_link(fn-> %{:x=>20, :y=> 20, :toggel => false, :torisch => false} end, name: :xy)
-    Agent.start_link(fn -> %{} end, name: :akt_map)
-    Agent.start_link(fn -> %{} end, name: :new_map)
-    Agent.start_link(fn -> [] end, name: :todo)
-    automat()
+
+  def start_link(_opts) do
+      GenServer.start_link(__MODULE__, %{}, name: :zellautomat)
   end
 
+  @impl true
+  def init(opts) do
+    Agent.start_link(fn-> %{:x=>20, :y=> 20, :toggel => false, :torisch => false} end, name: :xy)
+      Agent.start_link(fn -> %{} end, name: :akt_map)
+      Agent.start_link(fn -> %{} end, name: :new_map)
+    {:ok, opts}
+  end
   @doc """
   Hauptschleife
 
@@ -61,6 +57,47 @@ def init() do
   Die Dimensionen des Zellautomaten werden neu gesetzt.
   Kann wärend des Laufenden Programmes geschehen.
   """
+  @impl true
+  def handle_info({:toggel_cell, z , pid}, state) do
+      Enum.map(z, fn zelle ->
+        Agent.update(:akt_map, fn map ->
+          Map.update(map, zelle, 1 , &(rem(&1+1,2)))
+        end)
+      end)
+
+      send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
+      {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:set_xy, x,y}, state) do
+    Agent.update(:xy, &Map.put(&1, :x, x))
+        Agent.update(:xy, &Map.put(&1, :y, y))
+        {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:new_tick, pid}, state) do
+    tick()
+        send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
+        {:noreply, state}
+  end
+
+  @impl true
+  def handle_info({:automatic_tick, toggel , pid}, state) do
+    if toggel do
+      t =  Agent.get(:xy, &Map.get(&1, :toggel))
+      Agent.update(:xy, fn map -> Map.put(map, :toggel, !t)end)
+     end
+     t  = Agent.get(:xy, &Map.get(&1, :toggel))
+     if t do
+       tick()
+       send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
+       Process.send_after(self() , {:automatic_tick, false, pid}, 1000)
+     end
+     {:noreply, state}
+  end
+
   @spec automat :: no_return()
   def automat() do
     receive do
@@ -111,14 +148,13 @@ def init() do
   def tick() do
     map = Agent.get(:akt_map, fn map -> map end)
     Enum.map(map, fn{k,_v}-> todo_zellen_around(k) end)
-    zellentodo_doppelt = Agent.get(:todo, fn list -> list end)
-    zellentodo = Enum.uniq(zellentodo_doppelt)
+    zellentodo = Todo.get_list()
     Enum.map(zellentodo, fn k -> alive_in_new_map(k) end)
 
     nmap = Agent.get(:new_map, fn map -> map end)
     Agent.update(:akt_map, fn _oldmap -> nmap end)
     Agent.update(:new_map, fn _old -> %{} end)
-    Agent.update(:todo, fn _list -> [] end)
+    Todo.dell_list()
   end
 
   @doc """
@@ -150,14 +186,14 @@ def init() do
           x: x,
           y: y
         }
-        Agent.update(:todo, fn list -> [nzelle|list] end)
+        Todo.add_to_list(nzelle)
         todo_zellen_around( xline, yline, tx, ty, k, torisch)
       torisch == true ->
         nzelle = %Zelle{
           x: torus_func(x, xline),
           y: torus_func(y, yline)
         }
-        Agent.update(:todo, fn list -> [nzelle|list] end)
+        Todo.add_to_list(nzelle)
         todo_zellen_around( xline, yline, tx, ty, k, torisch)
       true ->
         todo_zellen_around( xline, yline, tx, ty, k, torisch)

@@ -97,8 +97,8 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
   def handle_input({:cursor_button, {:left, :press, 0, {xposo, ypos}}}, _context, state) do
     xpos = xposo - @offset
     if 0 <= xpos and xpos < @tile_field and 0 <= ypos and ypos < @tile_field do
-      xline = Agent.get(:xy, &Map.get(&1, :x))
-      yline = Agent.get(:xy, &Map.get(&1, :y))
+      xline = XY.get(:x)
+      yline = XY.get(:y)
       x = ceil(xpos/(@tile_field/xline))
       y = ceil(ypos/(@tile_field/yline))
       z = %Zelle{
@@ -149,8 +149,8 @@ Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
   """
   @spec build_rect(graph :: Scenic.Graph.t(), map :: map()) :: Scenic.Graph.t()
   def build_rect(graph, map)do
-    xline = Agent.get(:xy, &Map.get(&1, :x))
-    yline = Agent.get(:xy, &Map.get(&1, :y))
+    xline = XY.get(:x)
+    yline = XY.get(:y)
     graph
     |>rect({@tile_field, @tile_field}, fill: :white, translate: {@offset, 0})
     |>build_lines_h(yline, yline)

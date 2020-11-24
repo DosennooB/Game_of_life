@@ -6,7 +6,7 @@ Die nötigen Paarameter werden in Agents gespeichert.
 
 **Agents:**
 - **xy:** hier werden die Dimensionen des Zellautomaten gespeichert
-  es wird auch noch gespeichert ob der Automat von selber laufen soll oder nicht
+  es wird auch noch gespeichert ob der Automat von selber laufen soll oder nicht und ob er torisch ist.
 - **akt_map:** Die Werte der zellen werden als 1 und 0 in einer map mit dem Zellenstruct als id gespeichert
   um Platz zu sparen werden nach möglichkeit nur zellen mit 1 gespeichert
 - **new_map:** dient als Zwischenspicher bei der Berechnung des neuen Zellautomaten
@@ -27,7 +27,6 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
 
   @impl true
   def init(opts) do
-    Agent.start_link(fn-> %{:x=>20, :y=> 20, :toggel => false, :torisch => false} end, name: :xy)
       Agent.start_link(fn -> %{} end, name: :akt_map)
       Agent.start_link(fn -> %{} end, name: :new_map)
     {:ok, opts}
@@ -59,21 +58,21 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
   """
   @impl true
   def handle_info({:toggel_cell, z , pid}, state) do
-      Enum.map(z, fn zelle ->
-        Agent.update(:akt_map, fn map ->
-          Map.update(map, zelle, 1 , &(rem(&1+1,2)))
-        end)
+    Enum.map(z, fn zelle ->
+      Agent.update(:akt_map, fn map ->
+        Map.update(map, zelle, 1 , &(rem(&1+1,2)))
       end)
+    end)
 
-      send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
-      {:noreply, state}
+    send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
+    {:noreply, state}
   end
 
   @impl true
   def handle_info({:set_xy, x,y}, state) do
-    Agent.update(:xy, &Map.put(&1, :x, x))
-        Agent.update(:xy, &Map.put(&1, :y, y))
-        {:noreply, state}
+    XY.set(:x, x)
+    XY.set(:y, y)
+    {:noreply, state}
   end
 
   @impl true
@@ -86,10 +85,10 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
   @impl true
   def handle_info({:automatic_tick, toggel , pid}, state) do
     if toggel do
-      t =  Agent.get(:xy, &Map.get(&1, :toggel))
-      Agent.update(:xy, fn map -> Map.put(map, :toggel, !t)end)
+      t = XY.get(:toggel)
+      XY.set(:toggel, !t)
      end
-     t  = Agent.get(:xy, &Map.get(&1, :toggel))
+     t = XY.get(:toggel)
      if t do
        tick()
        send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
@@ -98,44 +97,6 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
      {:noreply, state}
   end
 
-  @spec automat :: no_return()
-  def automat() do
-    receive do
-      #z ist eine Liste aus Zellen
-      {:toggel_cell, z , pid} ->
-        Enum.map(z, fn zelle ->
-          Agent.update(:akt_map, fn map ->
-            Map.update(map, zelle, 1 , &(rem(&1+1,2)))
-          end)
-        end)
-
-        send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
-        automat()
-
-      {:new_tick, pid} ->
-        tick()
-        send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
-        automat()
-
-      {:automatic_tick, toggel , pid} ->
-        if toggel do
-         t =  Agent.get(:xy, &Map.get(&1, :toggel))
-         Agent.update(:xy, fn map -> Map.put(map, :toggel, !t)end)
-        end
-        t  = Agent.get(:xy, &Map.get(&1, :toggel))
-        if t do
-          tick()
-          send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
-          Process.send_after(self() , {:automatic_tick, false, pid}, 1000)
-        end
-        automat()
-
-      {:set_xy, x,y} ->
-        Agent.update(:xy, &Map.put(&1, :x, x))
-        Agent.update(:xy, &Map.put(&1, :y, y))
-        automat()
-      end
-  end
 
   @doc """
   Lässt den nächsten Zustand des Zellautomaten berechnen.
@@ -165,9 +126,9 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
   """
   @spec todo_zellen_around(zelle :: Zelle.t()) :: :ok
   def todo_zellen_around(zelle = %Zelle{}) do
-    xline = Agent.get(:xy, &Map.get(&1, :x))
-    yline = Agent.get(:xy, &Map.get(&1, :y))
-    torisch = Agent.get(:xy, &Map.get(&1, :torisch))
+    xline = XY.get(:x)
+    yline = XY.get(:y)
+    torisch = XY.get(:torisch)
     todo_zellen_around( xline, yline, [1,1,1,0,0,0,-1,-1,-1],[1,0,-1,1,0,-1,1,0,-1] ,zelle, torisch)
   end
 
@@ -209,9 +170,9 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
   """
   @spec alive_in_new_map(k :: Zelle.t()) :: true | false
   def alive_in_new_map(k = %Zelle{}) do
-    xline = Agent.get(:xy, &Map.get(&1, :x))
-    yline = Agent.get(:xy, &Map.get(&1, :y))
-    torisch = Agent.get(:xy, &Map.get(&1, :torisch))
+    xline = XY.get(:x)
+    yline = XY.get(:y)
+    torisch = XY.get(:torisch)
     wert =  around_wert(0, xline,yline, [1,1,1,0,0,-1,-1,-1],[1,0,-1,1,-1,1,0,-1] ,k, torisch)
     zellenwert = Agent.get(:akt_map, &Map.get_lazy(&1, k, fn -> 0 end))
     cond do

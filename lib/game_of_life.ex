@@ -9,8 +9,9 @@ defmodule GameOfLife do
 
     # start the application with the viewport
     children = [
-      {Scenic, viewports: [main_viewport_config]},
+      {XY, []},
       {Todo, []},
+      {Scenic, viewports: [main_viewport_config]},
       {Zellautomat, []}
     ]
 

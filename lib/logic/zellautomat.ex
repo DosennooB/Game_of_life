@@ -31,8 +31,7 @@ defmodule Zellautomat do
   Es können mehrere Zellen gleichzeitig
   verändert werden.
   """
-  @spec handle_info({:toggel_cell, z :: [Zelle.t()], pid :: pid()}, state :: term()) ::
-          {:noreply, state :: term()}
+  @spec handle_info({:toggel_cell, z :: [Zelle.t()], pid :: pid()}, state :: term()) :: {:noreply, state :: term()}
   @impl true
   def handle_info({:toggel_cell, z, pid}, state) do
     Zustand.toggel_cell(z)
@@ -47,9 +46,21 @@ defmodule Zellautomat do
   @spec handle_info({:set_xy, x :: pos_integer(), y :: pos_integer()}, state :: term()) ::
           {:noreply, state :: term()}
   @impl true
-  def handle_info({:set_xy, x, y}, state) do
-    XY.set(:x, x)
-    XY.set(:y, y)
+  def handle_info({:set_xy, x, y, pid}, state) do
+    XY.set(:x, min(x, 1))
+    XY.set(:y, min(y, 1))
+    resize()
+    send(pid, {:new_map, Zustand.get_akt_map()})
+    {:noreply, state}
+  end
+
+
+  @doc """
+  Ändert den Torisch Wert in der Datenhaltung.
+  """
+  @spec handle_info({:set_torisch, torisch_wert :: boolean()}, state :: term()) :: {:noreply, state :: term()}
+  def handle_info({:set_torisch, torisch_wert}, state) do
+    XY.set(:torisch, torisch_wert)
     {:noreply, state}
   end
 
@@ -112,6 +123,26 @@ defmodule Zellautomat do
     Todo.dell_list()
     Zustand.end_tick()
   end
+
+  @doc """
+  Löscht alle Zellen auserhalb der Vorgegeben Dimensionen.
+
+  Schreibt dazu alle zellen innerhalb der Dimensionen in die neue Map und setzt diese dann
+  als Aktuelle.
+  """
+  @spec resize() :: :ok
+  def resize() do
+    map = Zustand.get_akt_map()
+    x = XY.get(:x)
+    y = XY.get(:y)
+    Enum.map(map, fn{k = %Zelle{}, v} ->
+      if k.x <= x and k.y <= y and v == 1 do
+        Zustand.set_new_cell(k)
+      end
+    end)
+    Zustand.end_tick()
+  end
+
 
   @doc """
   Ermittelt Nachtbarn und die angegebene Zelle.

@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
     <meta name="project" content="game_of_life v0.3.5">
-    <title>GameOfLife.Scene.Home — game_of_life v0.3.5</title>
+    <title>Todo — game_of_life v0.3.5</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
     <script src="dist/sidebar_items-0cb3c2478c.js"></script>
       <script src="docs_config.js"></script>
@@ -63,8 +63,8 @@ game_of_life      </a>
     <div id="content" class="content-inner">
 
       <h1>
-        GameOfLife.Scene.Home <small class="app-vsn">(game_of_life v0.3.5)</small>
-          <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/home.ex#L1" title="View Source" class="view-source" rel="help">
+        Todo <small class="app-vsn">(game_of_life v0.3.5)</small>
+          <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/agent_impl/todo.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
             <span class="sr-only">View Source</span>
           </a>
@@ -72,9 +72,7 @@ game_of_life      </a>
 
 
         <section id="moduledoc">
-<p>Scene wird als erstes aufgerufen.
-In ihr werden die Dimension des Zellautomaten eingegeben.</p><p>Wichtig: Zellen nur in Dimensionen bis maximal 20x20 eingeben.
-In der aktuellen Version eine Limitation des Frameworks</p>        </section>
+<p>Enthält alle Zellen die im nächsten Schritt berechnet werden müssen.</p><p>Wird als zwischen speicher genutzt.</p>        </section>
 
         <section id="summary" class="details-list">
           <h1 class="section-heading">
@@ -90,15 +88,33 @@ In der aktuellen Version eine Limitation des Frameworks</p>        </section>
     </h2>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#filter_event/3">filter_event(event, from, scene_state)</a>
+    <a href="#add_to_list/1">add_to_list(nzelle)</a>
   </div>
-    <div class="summary-synopsis"><p>Reagiert auf Benutzereingaben</p></div>
+    <div class="summary-synopsis"><p>Nimmt eine Neue zu bearbeitende Zelle in die Liste auf.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#init/2">init(_, opts)</a>
+    <a href="#child_spec/1">child_spec(arg)</a>
   </div>
-    <div class="summary-synopsis"><p>Callback implementation for <a href="https://hexdocs.pm/scenic/Scenic.Scene.html#c:init/2"><code class="inline">Scenic.Scene.init/2</code></a>.</p></div>
+    <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#dell_list/0">dell_list()</a>
+  </div>
+    <div class="summary-synopsis"><p>Löscht alle Zellen aus der Liste.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#get_list/0">get_list()</a>
+  </div>
+    <div class="summary-synopsis"><p>Gibt eine Liste an Zellen zurück die entsprechend bearbeitet werden sollen.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#start_link/1">start_link(opts)</a>
+  </div>
+    <div class="summary-synopsis"><p>Registriert den Prozess auf den passenden Namen.</p></div>
 </div>
   </div>
         </section>
@@ -111,14 +127,14 @@ In der aktuellen Version eine Limitation des Frameworks</p>        </section>
             </a>
 Functions          </h1>
           <div class="functions-list">
-<section class="detail" id="filter_event/3">
+<section class="detail" id="add_to_list/1">
   <div class="detail-header">
-    <a href="#filter_event/3" class="detail-link" title="Link to this function">
+    <a href="#add_to_list/1" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">filter_event(event, from, scene_state)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/home.ex#L62" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">add_to_list(nzelle)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/agent_impl/todo.ex#L31" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -127,34 +143,19 @@ Functions          </h1>
   <section class="docstring">
       <h2>Specs</h2>
       <div class="specs">
-          <pre>filter_event({:click, :start}, from :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(), state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
-  {:halt, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
-          <pre>filter_event(
-  {:value_changed, :reihe, value :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()},
-  from :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(),
-  state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
-) :: {:noreply, new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
-          <pre>filter_event(
-  {:value_changed, :spalte, value :: <a href="https://hexdocs.pm/elixir/String.html#t:t/0">String.t</a>()},
-  from :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>(),
-  state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
-) :: {:noreply, new_state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+          <pre>add_to_list(nzelle :: <a href="Zelle.html#t:t/0">Zelle.t</a>()) :: :ok</pre>
       </div>
 
-<p>Reagiert auf Benutzereingaben</p><p><code class="inline">{:click, :start}</code>
-Startet und übergibt den Zellautomaten die Dimensionen.
-Ruft das Hauptfenster auf.</p><p><code class="inline">{:value_changed, :reihe, value}</code>
-Neuer Wert für Reihe im State aktualisiert.</p><p><code class="inline">{:value_changed, :spalte, value}</code>
-Neuer Wert für Zeile im State akualisiert.</p>  </section>
+<p>Nimmt eine Neue zu bearbeitende Zelle in die Liste auf.</p>  </section>
 </section>
-<section class="detail" id="init/2">
+<section class="detail" id="child_spec/1">
   <div class="detail-header">
-    <a href="#init/2" class="detail-link" title="Link to this function">
+    <a href="#child_spec/1" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">init(_, opts)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/home.ex#L37" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">child_spec(arg)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/agent_impl/todo.ex#L2" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -162,7 +163,70 @@ Neuer Wert für Zeile im State akualisiert.</p>  </section>
 
   <section class="docstring">
 
-<p>Callback implementation for <a href="https://hexdocs.pm/scenic/Scenic.Scene.html#c:init/2"><code class="inline">Scenic.Scene.init/2</code></a>.</p>  </section>
+<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>  </section>
+</section>
+<section class="detail" id="dell_list/0">
+  <div class="detail-header">
+    <a href="#dell_list/0" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">dell_list()</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/agent_impl/todo.ex#L39" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>dell_list() :: :ok</pre>
+      </div>
+
+<p>Löscht alle Zellen aus der Liste.</p>  </section>
+</section>
+<section class="detail" id="get_list/0">
+  <div class="detail-header">
+    <a href="#get_list/0" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">get_list()</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/agent_impl/todo.ex#L22" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>get_list() :: [<a href="Zelle.html#t:t/0">Zelle.t</a>()]</pre>
+      </div>
+
+<p>Gibt eine Liste an Zellen zurück die entsprechend bearbeitet werden sollen.</p>  </section>
+</section>
+<section class="detail" id="start_link/1">
+  <div class="detail-header">
+    <a href="#start_link/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">start_link(opts)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/agent_impl/todo.ex#L14" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>start_link(_opts :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()}</pre>
+      </div>
+
+<p>Registriert den Prozess auf den passenden Namen.</p>  </section>
 </section>
           </div>
         </section>

@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
-    <meta name="project" content="game_of_life v0.3.1">
-    <title>Anforderungen und Überlegungen — game_of_life v0.3.1</title>
+    <meta name="project" content="game_of_life v0.3.5">
+    <title>Anforderungen und Überlegungen — game_of_life v0.3.5</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-    <script src="dist/sidebar_items-9aaeab5080.js"></script>
+    <script src="dist/sidebar_items-0cb3c2478c.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
@@ -43,7 +43,7 @@
       <a href="GameOfLife.html" class="sidebar-projectName">
 game_of_life      </a>
       <strong class="sidebar-projectVersion">
-        v0.3.1
+        v0.3.5
       </strong>
     </div>
   </div>
@@ -80,18 +80,20 @@ Projekt damit umsetzten könnte. Allerdings bin ich bei der Ausarbeitung auf Lim
   <a href="#struktur-des-programms" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Struktur des Programms
 </h2>
-<p>Das Programm besteht im weitesten Sinne aus Frontend und Backend.
+<p>Das Programm ist in drei Schichten aufgebaut.
+Frontend, Logik und Datenhaltung. Jeder dieser Schichten ist in einzelnen Prozessen ausgefürt.
+Die Prozesse werden vom Supervisor überwacht und neu gestartet sobalt einer aufgrund eines Fehlers abstürtzen sollte.</p><p>Das Programm besteht im weitesten Sinne aus Frontend und Backend.
 Das Frontend hier die Nutzeroberfläche reagiert auf Nutzereingaben und schick diese als Elixir Massage
-an den Server. Der Zellautomat ist in diesem Fall das Backend es verarbeitet Massages und berchnet den neuen Zustand. Das Frontend hat eine dedizierte callback Methode, die aufgerufen wird wenn der Zellautomat einen neuen Zustand errechnet hat.</p><h3 id="besonderheiten-der-nutzeroberfläche" class="section-heading">
+an die Logik. Der Zellautomat ist in diesem Fall die Logik verarbeitet Massages und berechnet den neuen Zustand. Die nötigen Informationen und der Zustand des Zellautomaten werden in der Datenhaltung gespeichert. Das Frontend hat eine dedizierte callback Methode, die aufgerufen wird wenn der Zellautomat einen neuen Zustand errechnet hat. Dieser aktualisiert die Oberfläche auf der der Zustand des Zellautomaten angezeigt wird.</p><h3 id="besonderheiten-der-nutzeroberfläche" class="section-heading">
   <a href="#besonderheiten-der-nutzeroberfläche" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
   Besonderheiten der Nutzeroberfläche
 </h3>
 <p>Das Feld des Zellautomaten in der Nutzeroberfläche ist über Primitive Rechtecke realisiert.
-Nach dem clicken in das Feld wird ein Struct der Zelle angefertigt, auf die geclickt wurde. Dieses wird auch im Server zur Adressierung genutzt. </p><h3 id="besonderheiten-des-servers" class="section-heading">
-  <a href="#besonderheiten-des-servers" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
-  Besonderheiten des Servers
+Nach dem clicken in das Feld wird ein Struct der Zelle angefertigt, auf die geclickt wurde. Dieses wird auch im Server zur Adressierung genutzt. </p><h3 id="besonderheiten-der-logik" class="section-heading">
+  <a href="#besonderheiten-der-logik" class="hover-link"><span class="icon-link" aria-hidden="true"></span></a>
+  Besonderheiten der Logik
 </h3>
-<p>Der Server ist ein separater Prozess. Enthält nur die Logik. Die Datenspeicherung übernehmen weitere Prozesse. Die sogenannten Agents. Da die Elixir Standard Bibliothek keine Arrays anbietet, habe ich beschlossen die Werte als Key Value Paare zu speichern, wobei der Key das Struct vom Typ Zelle ist.
+<p>Die Logik ist ein separater Prozess. Die Datenspeicherung übernehmen weitere Prozesse. Die sogenannten Agents. Da die Elixir Standard Bibliothek keine Arrays anbietet, habe ich beschlossen die Werte als Key Value Paare zu speichern, wobei der Key das Struct vom Typ Zelle ist.
 Um Speicher zu sparen werden nach Möglichkeit nur Zellen mit dem Value 1 (also lebende) gespeichert.
 Um Rechenleistung zu sparen werden für den nächsten Zustand nur die lebenden Zellen und deren Nachbarn 
 berechnet. </p>      <footer class="footer">

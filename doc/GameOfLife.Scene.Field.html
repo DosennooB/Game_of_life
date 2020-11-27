@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
-    <meta name="project" content="game_of_life v0.3.1">
-    <title>GameOfLife.Scene.Field — game_of_life v0.3.1</title>
+    <meta name="project" content="game_of_life v0.3.5">
+    <title>GameOfLife.Scene.Field — game_of_life v0.3.5</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-    <script src="dist/sidebar_items-9aaeab5080.js"></script>
+    <script src="dist/sidebar_items-0cb3c2478c.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
@@ -43,7 +43,7 @@
       <a href="GameOfLife.html" class="sidebar-projectName">
 game_of_life      </a>
       <strong class="sidebar-projectVersion">
-        v0.3.1
+        v0.3.5
       </strong>
     </div>
   </div>
@@ -63,7 +63,7 @@ game_of_life      </a>
     <div id="content" class="content-inner">
 
       <h1>
-        GameOfLife.Scene.Field <small class="app-vsn">(game_of_life v0.3.1)</small>
+        GameOfLife.Scene.Field <small class="app-vsn">(game_of_life v0.3.5)</small>
           <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
             <span class="sr-only">View Source</span>
@@ -102,7 +102,7 @@ Durch &quot;run&quot; wird der der Zelleautomat angegewiesen in Intervallen sein
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#build_rect/4">build_rect(graph, xline, yline, map)</a>
+    <a href="#build_rect/2">build_rect(graph, map)</a>
   </div>
     <div class="summary-synopsis"><p>Baut das Zellgitter mit den jeweiligen state des Zellautomaten auf.</p></div>
 </div>
@@ -179,7 +179,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">build_lines_v(graph, x, xline)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L216" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L221" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -197,14 +197,14 @@ Functions          </h1>
 
 <p>Zeichent vertikale Linien</p><p>Die Linien erzeugen die passenden Rechtecke die dem State des Zellautomaten passen.</p>  </section>
 </section>
-<section class="detail" id="build_rect/4">
+<section class="detail" id="build_rect/2">
   <div class="detail-header">
-    <a href="#build_rect/4" class="detail-link" title="Link to this function">
+    <a href="#build_rect/2" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">build_rect(graph, xline, yline, map)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L162" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">build_rect(graph, map)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L153" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -213,12 +213,7 @@ Functions          </h1>
   <section class="docstring">
       <h2>Specs</h2>
       <div class="specs">
-          <pre>build_rect(
-  graph :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>(),
-  xline :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  yline :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
-  map :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()
-) :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()</pre>
+          <pre>build_rect(graph :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>(), map :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">map</a>()) :: <a href="https://hexdocs.pm/scenic/Scenic.Graph.html#t:t/0">Scenic.Graph.t</a>()</pre>
       </div>
 
 <p>Baut das Zellgitter mit den jeweiligen state des Zellautomaten auf.</p><p>Ruft Funktionen für das erstellen des Gitters und zeichnen der aktiven Zellen auf.</p>  </section>
@@ -230,7 +225,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">fill_rect(graph, xline, yline, list)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L171" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L165" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -256,7 +251,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">filter_event(event, from, scene_state)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L72" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L67" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -283,7 +278,7 @@ oder aufzuhören. Updatete den Button entsprechend.</p>  </section>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">handle_info(arg1, state)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L134" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L132" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -298,7 +293,7 @@ oder aufzuhören. Updatete den Button entsprechend.</p>  </section>
 
 <p>Updatet den Graph wenn ein neuer Zustand vom Zellautomaten berechnet wurde.</p><p>Wartet auf eine Message vom Zellautomaten. Diese enthält einenen aktuellen Graphen.
 Der aktuelle Graph wird mit build_rect erstellt. Dieser wird anschießend angezeigt.
-übergibt den State die neuen dimensionen und den Zustand des Zellautomaten.</p>  </section>
+übergibt den State den neuen Zustand des Zellautomaten.</p>  </section>
 </section>
 <section class="detail" id="handle_input/3">
   <div class="detail-header">
@@ -307,7 +302,7 @@ Der aktuelle Graph wird mit build_rect erstellt. Dieser wird anschießend angeze
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">handle_input(event, arg2, scene_state)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L104" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L99" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -334,7 +329,7 @@ und berechnet die Zelle auf der die Interaktion statt fand.</p>  </section>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">init(_, opts)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L41" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/scenes/field.ex#L42" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>

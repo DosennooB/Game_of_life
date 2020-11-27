@@ -23,18 +23,22 @@ Projekt damit umsetzten könnte. Allerdings bin ich bei der Ausarbeitung auf Lim
 
 ## Struktur des Programms
 
+Das Programm ist in drei Schichten aufgebaut.
+Frontend, Logik und Datenhaltung. Jeder dieser Schichten ist in einzelnen Prozessen ausgefürt.
+Die Prozesse werden vom Supervisor überwacht und neu gestartet sobalt einer aufgrund eines Fehlers abstürtzen sollte.
+
 Das Programm besteht im weitesten Sinne aus Frontend und Backend.
 Das Frontend hier die Nutzeroberfläche reagiert auf Nutzereingaben und schick diese als Elixir Massage
-an den Server. Der Zellautomat ist in diesem Fall das Backend es verarbeitet Massages und berchnet den neuen Zustand. Das Frontend hat eine dedizierte callback Methode, die aufgerufen wird wenn der Zellautomat einen neuen Zustand errechnet hat.
+an die Logik. Der Zellautomat ist in diesem Fall die Logik verarbeitet Massages und berechnet den neuen Zustand. Die nötigen Informationen und der Zustand des Zellautomaten werden in der Datenhaltung gespeichert. Das Frontend hat eine dedizierte callback Methode, die aufgerufen wird wenn der Zellautomat einen neuen Zustand errechnet hat. Dieser aktualisiert die Oberfläche auf der der Zustand des Zellautomaten angezeigt wird.
 
 ### Besonderheiten der Nutzeroberfläche
 
 Das Feld des Zellautomaten in der Nutzeroberfläche ist über Primitive Rechtecke realisiert.
 Nach dem clicken in das Feld wird ein Struct der Zelle angefertigt, auf die geclickt wurde. Dieses wird auch im Server zur Adressierung genutzt. 
 
-### Besonderheiten des Servers 
+### Besonderheiten der Logik
 
-Der Server ist ein separater Prozess. Enthält nur die Logik. Die Datenspeicherung übernehmen weitere Prozesse. Die sogenannten Agents. Da die Elixir Standard Bibliothek keine Arrays anbietet, habe ich beschlossen die Werte als Key Value Paare zu speichern, wobei der Key das Struct vom Typ Zelle ist.
+Die Logik ist ein separater Prozess. Die Datenspeicherung übernehmen weitere Prozesse. Die sogenannten Agents. Da die Elixir Standard Bibliothek keine Arrays anbietet, habe ich beschlossen die Werte als Key Value Paare zu speichern, wobei der Key das Struct vom Typ Zelle ist.
 Um Speicher zu sparen werden nach Möglichkeit nur Zellen mit dem Value 1 (also lebende) gespeichert.
 Um Rechenleistung zu sparen werden für den nächsten Zustand nur die lebenden Zellen und deren Nachbarn 
 berechnet. 

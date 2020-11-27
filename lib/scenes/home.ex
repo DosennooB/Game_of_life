@@ -21,11 +21,16 @@ defmodule GameOfLife.Scene.Home do
   # ============================================================================
   # setup
   @graph Graph.build()
-    |> text("Reihe", font_size: @text_size,translate: {200, 480-@text_size * 2})
-    |> text_field("20", id: :reihe, filter: :number,  translate: {200,480-@text_size})
-    |> text("Spalte", font_size: @text_size,translate: {400, 480-@text_size * 2})
-    |> text_field("20", id: :spalte, filter: :number,  translate: {400,480-@text_size})
-    |> button("Starten", id: :start, width: 400 ,button_font_size: @text_size, translate: {200,480+@text_size})
+         |> text("Reihe", font_size: @text_size, translate: {200, 480 - @text_size * 2})
+         |> text_field("20", id: :reihe, filter: :number, translate: {200, 480 - @text_size})
+         |> text("Spalte", font_size: @text_size, translate: {400, 480 - @text_size * 2})
+         |> text_field("20", id: :spalte, filter: :number, translate: {400, 480 - @text_size})
+         |> button("Starten",
+           id: :start,
+           width: 400,
+           button_font_size: @text_size,
+           translate: {200, 480 + @text_size}
+         )
 
   # --------------------------------------------------------
 
@@ -36,6 +41,7 @@ defmodule GameOfLife.Scene.Home do
       spalte: "20",
       viewport: opts[:viewport]
     }
+
     {:ok, state, push: @graph}
   end
 
@@ -52,27 +58,36 @@ defmodule GameOfLife.Scene.Home do
   `{:value_changed, :spalte, value}`
   Neuer Wert für Zeile im State akualisiert.
   """
-  @spec filter_event({:click, :start}, from :: pid(), state :: term()) :: {:halt , state ::term()}
+  @spec filter_event({:click, :start}, from :: pid(), state :: term()) :: {:halt, state :: term()}
   def filter_event({:click, :start}, _from, state) do
     %{spalte: spalte} = state
     %{reihe: reihe} = state
-    spalte_int = max(1, String.to_integer(spalte)) #Um in aktueller Version dimension nicht zu groß werden zu lassen
+    # Um in aktueller Version dimension nicht zu groß werden zu lassen
+    spalte_int = max(1, String.to_integer(spalte))
     reihe_int = max(1, String.to_integer(reihe))
-    send :zellautomat,{:set_xy, reihe_int, spalte_int}
+    send(:zellautomat, {:set_xy, reihe_int, spalte_int})
     %{viewport: vp} = state
     s = GameOfLife.Scene.Field
     ViewPort.set_root(vp, {s, nil})
     {:halt, state}
   end
 
-  @spec filter_event({:value_changed, :reihe, value :: String.t()}, from :: pid(), state :: term()) :: {:noreply, new_state :: term()}
-  def filter_event({:value_changed, :reihe, value},_from, state) do
+  @spec filter_event(
+          {:value_changed, :reihe, value :: String.t()},
+          from :: pid(),
+          state :: term()
+        ) :: {:noreply, new_state :: term()}
+  def filter_event({:value_changed, :reihe, value}, _from, state) do
     new_state = Map.put(state, :reihe, value)
     {:noreply, new_state}
   end
 
-  @spec filter_event({:value_changed, :spalte, value :: String.t()}, from :: pid(), state :: term()) :: {:noreply, new_state :: term()}
-  def filter_event({:value_changed, :spalte, value},_from, state) do
+  @spec filter_event(
+          {:value_changed, :spalte, value :: String.t()},
+          from :: pid(),
+          state :: term()
+        ) :: {:noreply, new_state :: term()}
+  def filter_event({:value_changed, :spalte, value}, _from, state) do
     new_state = Map.put(state, :spalte, value)
     {:noreply, new_state}
   end

@@ -1,102 +1,94 @@
 defmodule Zellautomat do
   use GenServer
-@moduledoc """
-Logic des Zellautomaten.
-Die nötigen Paarameter werden in Agents gespeichert.
 
-**Agents:**
-- **xy:** hier werden die Dimensionen des Zellautomaten gespeichert
-  es wird auch noch gespeichert ob der Automat von selber laufen soll oder nicht und ob er torisch ist.
-- **akt_map:** Die Werte der zellen werden als 1 und 0 in einer map mit dem Zellenstruct als id gespeichert
-  um Platz zu sparen werden nach möglichkeit nur zellen mit 1 gespeichert
-- **new_map:** dient als Zwischenspicher bei der Berechnung des neuen Zellautomaten
-- **todo:** enthält Zellen die zum nächsten Schritt neu berechnet werden müssen
-"""
+  @moduledoc """
+  Logic des Zellautomaten.
 
+  Die nötigen Paarameter werden in Agents gespeichert.
+  Der Zelleautomat wird als Genserver Implementiert und von einem Supervisor überwacht.
+  Er kann abstürtzen ohne das ein Datenverlust statt findet.
+  """
 
+  @doc """
+  Initialisierung des Automaten.
 
-@doc """
-Initialisierung des Automaten.
-
-Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
-"""
-
+  Starten des Zellautomaten Als Genserver. Optionale Parameter sind noch nicht vorgesehen.
+  """
+  @spec start_link(_opts :: any()) :: {:ok, pid}
   def start_link(_opts) do
-      GenServer.start_link(__MODULE__, %{}, name: :zellautomat)
+    GenServer.start_link(__MODULE__, %{}, name: :zellautomat)
   end
 
   @impl true
   def init(opts) do
-      Agent.start_link(fn -> %{} end, name: :akt_map)
-      Agent.start_link(fn -> %{} end, name: :new_map)
     {:ok, opts}
   end
+
   @doc """
-  Hauptschleife
-
-  Es werde drei Signale verarbeitet
-  die neuen Werte werden über `{:new_map, data :: map()}`
-  zurück gegeben.
-
-  - **toggel_cell:**
   Es kann geziehlt eine Zelle an oder aus geschaltet werden,
-  abhängig von ihrem aktuellen Zustand. Es können mehrere Zellen gleichzeitig
+  abhängig von ihrem aktuellen Zustand.
+
+  Es können mehrere Zellen gleichzeitig
   verändert werden.
-
-
-  - **new_tick:**
-  Der nächste Zustand des Automaten wird berechnet.
-
-  - **automatic_tick:**
-  Alle n Sekunden wird ein neuer Zustand der Zellautomaten berechnet.
-  Durch den Parameter toggle kann diese Funktion an oder ausgeschaltet werden.
-  Gibt den neuen Zustand zurück.
-
-  - **set_xy:**
-  Die Dimensionen des Zellautomaten werden neu gesetzt.
-  Kann wärend des Laufenden Programmes geschehen.
   """
+  @spec handle_info({:toggel_cell, z :: [Zelle.t()], pid :: pid()}, state :: term()) ::
+          {:noreply, state :: term()}
   @impl true
-  def handle_info({:toggel_cell, z , pid}, state) do
-    Enum.map(z, fn zelle ->
-      Agent.update(:akt_map, fn map ->
-        Map.update(map, zelle, 1 , &(rem(&1+1,2)))
-      end)
-    end)
-
-    send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
+  def handle_info({:toggel_cell, z, pid}, state) do
+    Zustand.toggel_cell(z)
+    send(pid, {:new_map, Zustand.get_akt_map()})
     {:noreply, state}
   end
 
+  @doc """
+  Die Dimensionen des Zellautomaten werden neu gesetzt.
+  Kann wärend des Laufenden Programmes geschehen.
+  """
+  @spec handle_info({:set_xy, x :: pos_integer(), y :: pos_integer()}, state :: term()) ::
+          {:noreply, state :: term()}
   @impl true
-  def handle_info({:set_xy, x,y}, state) do
+  def handle_info({:set_xy, x, y}, state) do
     XY.set(:x, x)
     XY.set(:y, y)
     {:noreply, state}
   end
 
+  @doc """
+  Der nächste Zustand des Automaten wird berechnet.
+  """
+  @spec handle_info({:new_tick, pid :: pid()}, state :: term()) :: {:noreply, state :: term()}
   @impl true
   def handle_info({:new_tick, pid}, state) do
     tick()
-        send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
-        {:noreply, state}
+    send(pid, {:new_map, Zustand.get_akt_map()})
+    {:noreply, state}
   end
 
+  @doc """
+  Alle n Sekunden wird ein neuer Zustand der Zellautomaten berechnet.
+
+  Durch den Parameter toggle kann diese Funktion an oder ausgeschaltet werden.
+  Gibt den neuen Zustand zurück.
+  """
+  @spec handle_info({:automatic_tick, toggel :: boolean(), pid :: pid()}, state :: term()) ::
+          {:noreply, state :: term()}
   @impl true
-  def handle_info({:automatic_tick, toggel , pid}, state) do
+  def handle_info({:automatic_tick, toggel, pid}, state) do
     if toggel do
       t = XY.get(:toggel)
       XY.set(:toggel, !t)
-     end
-     t = XY.get(:toggel)
-     if t do
-       tick()
-       send pid, {:new_map, Agent.get(:akt_map, fn map -> map end)}
-       Process.send_after(self() , {:automatic_tick, false, pid}, 1000)
-     end
-     {:noreply, state}
-  end
+    end
 
+    t = XY.get(:toggel)
+
+    if t do
+      tick()
+      send(pid, {:new_map, Zustand.get_akt_map()})
+      Process.send_after(self(), {:automatic_tick, false, pid}, 1000)
+    end
+
+    {:noreply, state}
+  end
 
   @doc """
   Lässt den nächsten Zustand des Zellautomaten berechnen.
@@ -107,15 +99,18 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
   """
   @spec tick :: :ok
   def tick() do
-    map = Agent.get(:akt_map, fn map -> map end)
-    Enum.map(map, fn{k,_v}-> todo_zellen_around(k) end)
+    map = Zustand.get_akt_map()
+
+    Enum.map(map, fn {k, v} ->
+      if v == 1 do
+        todo_zellen_around(k)
+      end
+    end)
+
     zellentodo = Todo.get_list()
     Enum.map(zellentodo, fn k -> alive_in_new_map(k) end)
-
-    nmap = Agent.get(:new_map, fn map -> map end)
-    Agent.update(:akt_map, fn _oldmap -> nmap end)
-    Agent.update(:new_map, fn _old -> %{} end)
     Todo.dell_list()
+    Zustand.end_tick()
   end
 
   @doc """
@@ -129,36 +124,49 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
     xline = XY.get(:x)
     yline = XY.get(:y)
     torisch = XY.get(:torisch)
-    todo_zellen_around( xline, yline, [1,1,1,0,0,0,-1,-1,-1],[1,0,-1,1,0,-1,1,0,-1] ,zelle, torisch)
+
+    todo_zellen_around(
+      xline,
+      yline,
+      [1, 1, 1, 0, 0, 0, -1, -1, -1],
+      [1, 0, -1, 1, 0, -1, 1, 0, -1],
+      zelle,
+      torisch
+    )
   end
 
   @doc false
-  def todo_zellen_around( _xline, _yline, [], [], _k, _torisch) do
+  def todo_zellen_around(_xline, _yline, [], [], _k, _torisch) do
     :ok
   end
 
   @doc false
-  def todo_zellen_around( xline, yline, [hx|tx], [hy|ty], k, torisch) do
+  def todo_zellen_around(xline, yline, [hx | tx], [hy | ty], k, torisch) do
     x = hx + k.x
     y = hy + k.y
+
     cond do
       torisch == false and 0 < x and x <= xline and 0 < y and y <= yline ->
         nzelle = %Zelle{
           x: x,
           y: y
         }
+
         Todo.add_to_list(nzelle)
-        todo_zellen_around( xline, yline, tx, ty, k, torisch)
+        todo_zellen_around(xline, yline, tx, ty, k, torisch)
+
       torisch == true ->
         nzelle = %Zelle{
           x: torus_func(x, xline),
           y: torus_func(y, yline)
         }
+
         Todo.add_to_list(nzelle)
-        todo_zellen_around( xline, yline, tx, ty, k, torisch)
+        todo_zellen_around(xline, yline, tx, ty, k, torisch)
+
       true ->
-        todo_zellen_around( xline, yline, tx, ty, k, torisch)
-      end
+        todo_zellen_around(xline, yline, tx, ty, k, torisch)
+    end
   end
 
   @doc """
@@ -173,54 +181,77 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
     xline = XY.get(:x)
     yline = XY.get(:y)
     torisch = XY.get(:torisch)
-    wert =  around_wert(0, xline,yline, [1,1,1,0,0,-1,-1,-1],[1,0,-1,1,-1,1,0,-1] ,k, torisch)
-    zellenwert = Agent.get(:akt_map, &Map.get_lazy(&1, k, fn -> 0 end))
+
+    wert =
+      around_wert(
+        0,
+        xline,
+        yline,
+        [1, 1, 1, 0, 0, -1, -1, -1],
+        [1, 0, -1, 1, -1, 1, 0, -1],
+        k,
+        torisch
+      )
+
+    zellenwert = Zustand.get_akt_cell_wert(k)
+
     cond do
       zellenwert == 1 ->
         if wert == 2 or wert == 3 do
-          Agent.update(:new_map, &Map.put(&1, k, 1))
+          Zustand.set_new_cell(k)
           true
         end
+
       zellenwert == 0 ->
         if wert == 3 do
-          Agent.update(:new_map, &Map.put(&1, k, 1))
+          Zustand.set_new_cell(k)
           false
         end
     end
+
     false
   end
-
 
   @doc """
   Summe der Nachtbarn
 
   Berechnet die Summe der Umligenden Zellen und gibt diese zurück.
   """
-  @spec around_wert(wert :: pos_integer(), xline :: pos_integer(), yline :: pos_integer(), list1 :: list(), list2 :: list(), k :: Zelle.t(), torisch :: boolean()) :: pos_integer()
+  @spec around_wert(
+          wert :: pos_integer(),
+          xline :: pos_integer(),
+          yline :: pos_integer(),
+          list1 :: list(),
+          list2 :: list(),
+          k :: Zelle.t(),
+          torisch :: boolean()
+        ) :: pos_integer()
   def around_wert(wert, _xline, _yline, [], [], _k, _torisch) do
     wert
   end
 
-  def around_wert(wert, xline, yline, [hx|tx], [hy|ty], k = %Zelle{}, torisch) do
-     x = hx + k.x
-     y = hy + k.y
+  def around_wert(wert, xline, yline, [hx | tx], [hy | ty], k = %Zelle{}, torisch) do
+    x = hx + k.x
+    y = hy + k.y
+
     cond do
-      torisch == false and 0 < x  and x <= xline and 0 < y and y <= yline ->
+      torisch == false and 0 < x and x <= xline and 0 < y and y <= yline ->
         nachtbar = %Zelle{
           x: x,
           y: y
         }
-        Agent.get(:akt_map, &Map.get_lazy(&1, nachtbar, fn -> 0 end)) + wert
-        |>around_wert(xline, yline,tx,ty,k,torisch)
+
+        (Zustand.get_akt_cell_wert(nachtbar) + wert)
+        |> around_wert(xline, yline, tx, ty, k, torisch)
 
       torisch == true ->
         nachtbar = %Zelle{
           x: torus_func(x, xline),
           y: torus_func(y, yline)
         }
-        IO.inspect(nachtbar)
-        Agent.get(:akt_map, &Map.get_lazy(&1, nachtbar, fn -> 0 end)) + wert
-        |>around_wert(xline, yline,tx,ty,k,torisch)
+
+        (Zustand.get_akt_cell_wert(nachtbar) + wert)
+        |> around_wert(xline, yline, tx, ty, k, torisch)
 
       true ->
         around_wert(wert, xline, yline, tx, ty, k, torisch)
@@ -235,9 +266,11 @@ Starten der Agenten und setzen der Dimensionen für den Zellautomaten.
   def torus_func(wert, dimension) do
     cond do
       wert <= 0 ->
-        wert+ dimension
+        wert + dimension
+
       wert > dimension ->
         wert - dimension
+
       true ->
         wert
     end

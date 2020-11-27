@@ -4,7 +4,7 @@ defmodule GameOfLife.MixProject do
   def project do
     [
       app: :game_of_life,
-      version: "0.3.1",
+      version: "0.3.5",
       elixir: "~> 1.7",
       build_embedded: true,
       start_permanent: Mix.env() == :prod,
@@ -13,7 +13,8 @@ defmodule GameOfLife.MixProject do
       # Docs
       source_url: "https://github.com/DosennooB/Game_of_life",
       docs: [
-        main: "GameOfLife", # The main page in the docs
+        # The main page in the docs
+        main: "GameOfLife",
         extras: doc()
       ]
     ]
@@ -43,7 +44,7 @@ defmodule GameOfLife.MixProject do
     [
       {:scenic, "~> 0.10"},
       {:scenic_driver_glfw, "~> 0.10", targets: :host},
-      {:ex_doc, "~> 0.22", only: :dev, runtime: false},
+      {:ex_doc, "~> 0.22", only: :dev, runtime: false}
     ]
   end
 end

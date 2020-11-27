@@ -11,6 +11,7 @@ defmodule GameOfLife do
     children = [
       {XY, []},
       {Todo, []},
+      {Zustand, []},
       {Scenic, viewports: [main_viewport_config]},
       {Zellautomat, []}
     ]

@@ -1,5 +1,9 @@
 # Changelog.
 
+- **0.3.5**
+Datenhaltung von Logik getrennt Fehler die zum Absturz der Logik führen 
+gehen nicht mehr mit Verlust der Daten einher.
+
 - **0.3.1** 
 Anzeigeleistung im Gui Thread verbessert.
 Dimensionen von 200 x 200 sind jetzt ohne Probleme möglich.

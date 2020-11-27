@@ -5,10 +5,10 @@
     <meta http-equiv="x-ua-compatible" content="ie=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="ExDoc v0.22.6">
-    <meta name="project" content="game_of_life v0.3.1">
-    <title>Zellautomat — game_of_life v0.3.1</title>
+    <meta name="project" content="game_of_life v0.3.5">
+    <title>Zellautomat — game_of_life v0.3.5</title>
     <link rel="stylesheet" href="dist/elixir-9f91ebe876dc01d67920.css" />
-    <script src="dist/sidebar_items-9aaeab5080.js"></script>
+    <script src="dist/sidebar_items-0cb3c2478c.js"></script>
       <script src="docs_config.js"></script>
     <script async src="dist/app-aaa6eb1824b11a32f32d.js"></script>
   </head>
@@ -43,7 +43,7 @@
       <a href="GameOfLife.html" class="sidebar-projectName">
 game_of_life      </a>
       <strong class="sidebar-projectVersion">
-        v0.3.1
+        v0.3.5
       </strong>
     </div>
   </div>
@@ -63,7 +63,7 @@ game_of_life      </a>
     <div id="content" class="content-inner">
 
       <h1>
-        Zellautomat <small class="app-vsn">(game_of_life v0.3.1)</small>
+        Zellautomat <small class="app-vsn">(game_of_life v0.3.5)</small>
           <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L1" title="View Source" class="view-source" rel="help">
             <span class="icon-code" aria-hidden="true"></span>
             <span class="sr-only">View Source</span>
@@ -72,10 +72,9 @@ game_of_life      </a>
 
 
         <section id="moduledoc">
-<p>Logic des Zellautomaten.
-Die nötigen Paarameter werden in Agents gespeichert.</p><p><strong>Agents:</strong></p><ul><li><strong>xy:</strong> hier werden die Dimensionen des Zellautomaten gespeichert
-es wird auch noch gespeichert ob der Automat von selber laufen soll oder nicht</li><li><strong>akt_map:</strong> Die Werte der zellen werden als 1 und 0 in einer map mit dem Zellenstruct als id gespeichert
-um Platz zu sparen werden nach möglichkeit nur zellen mit 1 gespeichert</li><li><strong>new_map:</strong> dient als Zwischenspicher bei der Berechnung des neuen Zellautomaten</li><li><strong>todo:</strong> enthält Zellen die zum nächsten Schritt neu berechnet werden müssen</li></ul>        </section>
+<p>Logic des Zellautomaten.</p><p>Die nötigen Paarameter werden in Agents gespeichert.
+Der Zelleautomat wird als Genserver Implementiert und von einem Supervisor überwacht.
+Er kann abstürtzen ohne das ein Datenverlust statt findet.</p>        </section>
 
         <section id="summary" class="details-list">
           <h1 class="section-heading">
@@ -97,19 +96,25 @@ um Platz zu sparen werden nach möglichkeit nur zellen mit 1 gespeichert</li><li
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#around_wert/6">around_wert(wert, xline, yline, list1, list2, k)</a>
+    <a href="#around_wert/7">around_wert(wert, xline, yline, list1, list2, k, torisch)</a>
   </div>
     <div class="summary-synopsis"><p>Summe der Nachtbarn</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#automat/0">automat()</a>
+    <a href="#child_spec/1">child_spec(init_arg)</a>
   </div>
-    <div class="summary-synopsis"><p>Hauptschleife</p></div>
+    <div class="summary-synopsis"><p>Returns a specification to start this module under a supervisor.</p></div>
 </div>
 <div class="summary-row">
   <div class="summary-signature">
-    <a href="#init/0">init()</a>
+    <a href="#handle_info/2">handle_info(msg, state)</a>
+  </div>
+    <div class="summary-synopsis"><p>Alle n Sekunden wird ein neuer Zustand der Zellautomaten berechnet.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#start_link/1">start_link(opts)</a>
   </div>
     <div class="summary-synopsis"><p>Initialisierung des Automaten.</p></div>
 </div>
@@ -124,6 +129,12 @@ um Platz zu sparen werden nach möglichkeit nur zellen mit 1 gespeichert</li><li
     <a href="#todo_zellen_around/1">todo_zellen_around(zelle)</a>
   </div>
     <div class="summary-synopsis"><p>Ermittelt Nachtbarn und die angegebene Zelle.</p></div>
+</div>
+<div class="summary-row">
+  <div class="summary-signature">
+    <a href="#torus_func/2">torus_func(wert, dimension)</a>
+  </div>
+    <div class="summary-synopsis"><p>Setzt eine Zelle auseherhalb der Dimension in den Torischen Bereich</p></div>
 </div>
   </div>
         </section>
@@ -143,7 +154,7 @@ Functions          </h1>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">alive_in_new_map(k)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L149" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L176" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -159,14 +170,14 @@ Functions          </h1>
 anhand des eigenen Wertes und der Summe der Nachbarn.
 Übergibt nur Zellen mit Wert 1 dem <code class="inline">:new_map</code> Agent</p>  </section>
 </section>
-<section class="detail" id="around_wert/6">
+<section class="detail" id="around_wert/7">
   <div class="detail-header">
-    <a href="#around_wert/6" class="detail-link" title="Link to this function">
+    <a href="#around_wert/7" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">around_wert(wert, xline, yline, list1, list2, k)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L176" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">around_wert(wert, xline, yline, list1, list2, k, torisch)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L225" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -181,49 +192,38 @@ anhand des eigenen Wertes und der Summe der Nachbarn.
   yline :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(),
   list1 :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">list</a>(),
   list2 :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">list</a>(),
-  k :: <a href="Zelle.html#t:t/0">Zelle.t</a>()
+  k :: <a href="Zelle.html#t:t/0">Zelle.t</a>(),
+  torisch :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>()
 ) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()</pre>
       </div>
 
 <p>Summe der Nachtbarn</p><p>Berechnet die Summe der Umligenden Zellen und gibt diese zurück.</p>  </section>
 </section>
-<section class="detail" id="automat/0">
+<section class="detail" id="child_spec/1">
   <div class="detail-header">
-    <a href="#automat/0" class="detail-link" title="Link to this function">
+    <a href="#child_spec/1" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">automat()</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L56" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">child_spec(init_arg)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L2" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
   </div>
 
   <section class="docstring">
-      <h2>Specs</h2>
-      <div class="specs">
-          <pre>automat() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">no_return</a>()</pre>
-      </div>
 
-<p>Hauptschleife</p><p>Es werde drei Signale verarbeitet
-die neuen Werte werden über <code class="inline">{:new_map, data :: map()}</code>
-zurück gegeben.</p><ul><li><p><strong>toggel_cell:</strong>
-Es kann geziehlt eine Zelle an oder aus geschaltet werden,
-abhängig von ihrem aktuellen Zustand.</p></li><li><p><strong>new_tick:</strong>
-Der nächste Zustand des Automaten wird berechnet.</p></li><li><p><strong>automatic_tick:</strong>
-Alle n Sekunden wird ein neuer Zustand der Zellautomaten berechnet.
-Durch den Parameter toggle kann diese Funktion an oder ausgeschaltet werden.
-Gibt den neuen Zustand zurück.</p></li></ul>  </section>
+<p>Returns a specification to start this module under a supervisor.</p><p>See <a href="https://hexdocs.pm/elixir/Supervisor.html"><code class="inline">Supervisor</code></a>.</p>  </section>
 </section>
-<section class="detail" id="init/0">
+<section class="detail" id="handle_info/2">
   <div class="detail-header">
-    <a href="#init/0" class="detail-link" title="Link to this function">
+    <a href="#handle_info/2" class="detail-link" title="Link to this function">
       <span class="icon-link" aria-hidden="true"></span>
       <span class="sr-only">Link to this function</span>
     </a>
-    <h1 class="signature">init()</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L22" class="view-source" rel="help" title="View Source">
+    <h1 class="signature">handle_info(msg, state)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L37" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -232,10 +232,41 @@ Gibt den neuen Zustand zurück.</p></li></ul>  </section>
   <section class="docstring">
       <h2>Specs</h2>
       <div class="specs">
-          <pre>init() :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">no_return</a>()</pre>
+          <pre>handle_info({:toggel_cell, z :: [<a href="Zelle.html#t:t/0">Zelle.t</a>()], pid :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()}, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
+  {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+          <pre>handle_info({:set_xy, x :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(), y :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()}, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
+  {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+          <pre>handle_info({:new_tick, pid :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()}, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()) ::
+  {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
+          <pre>handle_info(
+  {:automatic_tick, toggel :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">boolean</a>(), pid :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()},
+  state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()
+) :: {:noreply, state :: <a href="https://hexdocs.pm/elixir/typespecs.html#built-in-types">term</a>()}</pre>
       </div>
 
-<p>Initialisierung des Automaten.</p><p>Starten der Agenten und setzen der Dimensionen für den Zellautomaten.</p>  </section>
+<p>Alle n Sekunden wird ein neuer Zustand der Zellautomaten berechnet.</p><p>Durch den Parameter toggle kann diese Funktion an oder ausgeschaltet werden.
+Gibt den neuen Zustand zurück.</p>  </section>
+</section>
+<section class="detail" id="start_link/1">
+  <div class="detail-header">
+    <a href="#start_link/1" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">start_link(opts)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L18" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>start_link(_opts :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">any</a>()) :: {:ok, <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pid</a>()}</pre>
+      </div>
+
+<p>Initialisierung des Automaten.</p><p>Starten des Zellautomaten Als Genserver. Optionale Parameter sind noch nicht vorgesehen.</p>  </section>
 </section>
 <section class="detail" id="tick/0">
   <div class="detail-header">
@@ -244,7 +275,7 @@ Gibt den neuen Zustand zurück.</p></li></ul>  </section>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">tick()</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L93" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L99" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -267,7 +298,7 @@ Zelle mit dem Wert 1 sind, werden berechnet.</p>  </section>
       <span class="sr-only">Link to this function</span>
     </a>
     <h1 class="signature">todo_zellen_around(zelle)</h1>
-      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L113" class="view-source" rel="help" title="View Source">
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L119" class="view-source" rel="help" title="View Source">
        <span class="icon-code" aria-hidden="true"></span>
        <span class="sr-only">View Source</span>
      </a>
@@ -281,6 +312,27 @@ Zelle mit dem Wert 1 sind, werden berechnet.</p>  </section>
 
 <p>Ermittelt Nachtbarn und die angegebene Zelle.</p><p>Übergibt alle Nachtbarn und die angegebene Zelle,
 dem <code class="inline">:todo</code> Agent. Es sei den, sie befinden sich auserhalb des Zellautomaten.</p>  </section>
+</section>
+<section class="detail" id="torus_func/2">
+  <div class="detail-header">
+    <a href="#torus_func/2" class="detail-link" title="Link to this function">
+      <span class="icon-link" aria-hidden="true"></span>
+      <span class="sr-only">Link to this function</span>
+    </a>
+    <h1 class="signature">torus_func(wert, dimension)</h1>
+      <a href="https://github.com/DosennooB/Game_of_life/blob/master/lib/logic/zellautomat.ex#L262" class="view-source" rel="help" title="View Source">
+       <span class="icon-code" aria-hidden="true"></span>
+       <span class="sr-only">View Source</span>
+     </a>
+  </div>
+
+  <section class="docstring">
+      <h2>Specs</h2>
+      <div class="specs">
+          <pre>torus_func(wert :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>(), dimension :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()) :: <a href="https://hexdocs.pm/elixir/typespecs.html#basic-types">pos_integer</a>()</pre>
+      </div>
+
+<p>Setzt eine Zelle auseherhalb der Dimension in den Torischen Bereich</p>  </section>
 </section>
           </div>
         </section>

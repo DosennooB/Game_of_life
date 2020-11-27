@@ -7,6 +7,8 @@ Das Programm ist in drei großen Punkten limitiert
 
 - Note: in v0.3.0 werde Primitive Rechtecke statt Buttons genutzt so ist es jetzt möglich eine größere Dimension zu nutzen.
 
+- Note: in v0.3.1 wurde es noch effizenter umgesetzt.
+
 - **Aktualisierung:** Es ist mir kein Weg bekannt gewesen eine Callback Methode in der 
 Nutzeroberfläche zu implementieren. Dadurch kann der Server des Zellautomaten keine Aktualisierung
 der Nutzeroberfläche anstoßen.
@@ -30,3 +32,11 @@ Für eine Zukünftige weitere Entwicklung des Programms währen folgende Dinge m
 Diese sollten in Zukunft ausgebaut werden.
 
 - **Fensteränderung:** Zukünftig sollte man in der ersten Ansicht die Möglichkeit haben die Größe des Fensters einzustellen oder zumindest einen Skalierungsfaktor zu nutzen. 
+
+- **Dynamisches ändern von Parametern:** Es sollen zur Laufzeit die Dimesionen wie auch Parameter wie 
+Aktualisierungsrate und Torisch verändert werden können.
+
+- **Platzieren von Gleitern:** Es soll ein Dropdown Menü geben in dem man aus verschiedenen Gleitern
+auswählen kann. Diese können mit einem click auf dem Feld platziert werden.  
+
+- **Ändern der Weltregeln:** Es soll möglich sein zur Laufzeit die Regeln Welt zu ändern.

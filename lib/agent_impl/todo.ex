@@ -7,7 +7,6 @@ defmodule Todo do
   Wird als zwischen speicher genutzt.
   """
 
-
   @doc """
   Registriert den Prozess auf den passenden Namen.
   """
@@ -30,7 +29,7 @@ defmodule Todo do
   """
   @spec add_to_list(nzelle :: Zelle.t()) :: :ok
   def add_to_list(nzelle) do
-    Agent.update(:todo, fn list -> [nzelle|list] end)
+    Agent.update(:todo, fn list -> [nzelle | list] end)
   end
 
   @doc """

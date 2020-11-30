@@ -65,6 +65,26 @@ defmodule Zellautomat do
   end
 
   @doc """
+  Ändert den Wert für die Tickrate in Millisekunden.
+  """
+  @spec handle_info({:set_tick_rate, value :: integer()}, state :: term()) :: {:noreply, state :: term()}
+  @impl true
+  def handle_info({:set_tick_rate, value}, state) do
+    XY.set(:tick_rate, min(value, 1))
+    {:noreply, state}
+  end
+
+  @doc """
+  Sendet alle Parameter des Zellautomaten wie auch den Zellautomaten.
+  """
+  @spec handle_info({:get_all_params, pid :: pid()}, state :: term()) :: {:noreply, state :: term()}
+  @impl true
+  def handle_info({:get_all_params, pid}, state) do
+    send(pid, {XY.get_all(), Zustand.get_akt_map()})
+    {:noreply, state}
+  end
+
+  @doc """
   Der nächste Zustand des Automaten wird berechnet.
   """
   @spec handle_info({:new_tick, pid :: pid()}, state :: term()) :: {:noreply, state :: term()}

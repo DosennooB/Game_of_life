@@ -6,8 +6,8 @@ defmodule GameOfLife.Scene.Field do
   import Scenic.Components
   import Scenic.Primitives
 
-  @text_size 64
-  @offset 50
+  @text_size 50
+  @offset 00
   @tile_field 900
 
   @moduledoc """
@@ -31,8 +31,35 @@ defmodule GameOfLife.Scene.Field do
            height: 100,
            width: 300,
            font_size: @text_size,
-           t: {700, 900}
+           t: {600, 900}
          )
+         |> text("Torisch:",
+          height: 100,
+          width: 300,
+          text_align: :left,
+          font_size: @text_size, t: {1000, 100})
+         |> toggle(
+           false,
+           id: :toggle_torisch,
+           thumb_radius: @text_size/4 ,
+           t: {1200, 100})
+        |> button("crash Gui",
+           id: :crash_GUI,
+           height: 100,
+           width: 200,
+           font_size: @text_size,
+           t: {1000, 900}
+         )
+         |> button("crash Zellautomat",
+          id: :crash_Zellautomat,
+          height: 100,
+           width: 300,
+           font_size: @text_size,
+           t: {1200, 900}
+         )
+
+
+
 
   @doc """
   Initialisierung der Oberfläche
@@ -46,7 +73,9 @@ defmodule GameOfLife.Scene.Field do
       viewport: opts[:viewport]
     }
 
-    g = build_rect(@graph, %{})
+    Process.register(self(), :field)
+    map = Zustand.get_akt_map()
+    g = build_rect(@graph, map)
     {:ok, state, push: g}
   end
 
@@ -61,11 +90,15 @@ defmodule GameOfLife.Scene.Field do
   Gibt den Zellautomaten dass Signal automatisch weiter zu laufen
   oder aufzuhören. Updatete den Button entsprechend.
   """
+  def filter_event({:value_changed, :toggle_torisch, bool}, _from, state) do
+    send(:zellautomat, {:set_torisch, bool})
+    {:noreply, state}
+  end
 
   @spec filter_event({:click, :next_step}, from :: pid(), state :: term()) ::
           {:noreply, state :: term(), [push: g :: Scenic.Graph.t()]}
   def filter_event({:click, :next_step}, _from, state) do
-    send(:zellautomat, {:new_tick, self()})
+    send(:zellautomat, {:new_tick})
     {:noreply, state}
   end
 
@@ -73,7 +106,7 @@ defmodule GameOfLife.Scene.Field do
           {:noreply, new_state :: term(), [push: g :: Scenic.Graph.t()]}
   def filter_event({:click, :intervall}, _from, %{graph: gr} = state) do
     %{map: map} = state
-    send(:zellautomat, {:automatic_tick, true, self()})
+    send(:zellautomat, {:automatic_tick, true})
 
     {_t, text} = Graph.get!(gr, :intervall).data
     g = run_stop(text, gr)
@@ -82,6 +115,11 @@ defmodule GameOfLife.Scene.Field do
     new_state = Map.put(state, :graph, g)
 
     {:noreply, new_state, push: g_new}
+  end
+
+  def filter_event({:click, :crash_Zellautomat}, _from, state) do
+    Process.exit(:zellautomat, "Stirb")
+    {:noreply, state}
   end
 
   @doc """
@@ -110,7 +148,7 @@ defmodule GameOfLife.Scene.Field do
         y: y
       }
 
-      send(:zellautomat, {:toggel_cell, [z], self()})
+      send(:zellautomat, {:toggel_cell, [z]})
     end
 
     {:noreply, state}

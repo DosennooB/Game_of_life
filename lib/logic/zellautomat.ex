@@ -31,11 +31,11 @@ defmodule Zellautomat do
   Es können mehrere Zellen gleichzeitig
   verändert werden.
   """
-  @spec handle_info({:toggel_cell, z :: [Zelle.t()], pid :: pid()}, state :: term()) :: {:noreply, state :: term()}
+  @spec handle_info({:toggel_cell, z :: [Zelle.t()]}, state :: term()) :: {:noreply, state :: term()}
   @impl true
-  def handle_info({:toggel_cell, z, pid}, state) do
+  def handle_info({:toggel_cell, z}, state) do
     Zustand.toggel_cell(z)
-    send(pid, {:new_map, Zustand.get_akt_map()})
+    send(:field, {:new_map, Zustand.get_akt_map()})
     {:noreply, state}
   end
 
@@ -46,11 +46,11 @@ defmodule Zellautomat do
   @spec handle_info({:set_xy, x :: pos_integer(), y :: pos_integer()}, state :: term()) ::
           {:noreply, state :: term()}
   @impl true
-  def handle_info({:set_xy, x, y, pid}, state) do
+  def handle_info({:set_xy, x, y}, state) do
     XY.set(:x, min(x, 1))
     XY.set(:y, min(y, 1))
     resize()
-    send(pid, {:new_map, Zustand.get_akt_map()})
+    send(:field, {:new_map, Zustand.get_akt_map()})
     {:noreply, state}
   end
 
@@ -77,21 +77,21 @@ defmodule Zellautomat do
   @doc """
   Sendet alle Parameter des Zellautomaten wie auch den Zellautomaten.
   """
-  @spec handle_info({:get_all_params, pid :: pid()}, state :: term()) :: {:noreply, state :: term()}
+  @spec handle_info({:get_all_params}, state :: term()) :: {:noreply, state :: term()}
   @impl true
-  def handle_info({:get_all_params, pid}, state) do
-    send(pid, {XY.get_all(), Zustand.get_akt_map()})
+  def handle_info({:get_all_params}, state) do
+    send(:field, {XY.get_all(), Zustand.get_akt_map()})
     {:noreply, state}
   end
 
   @doc """
   Der nächste Zustand des Automaten wird berechnet.
   """
-  @spec handle_info({:new_tick, pid :: pid()}, state :: term()) :: {:noreply, state :: term()}
+  @spec handle_info({:new_tick}, state :: term()) :: {:noreply, state :: term()}
   @impl true
-  def handle_info({:new_tick, pid}, state) do
+  def handle_info({:new_tick}, state) do
     tick()
-    send(pid, {:new_map, Zustand.get_akt_map()})
+    send(:field, {:new_map, Zustand.get_akt_map()})
     {:noreply, state}
   end
 
@@ -101,10 +101,10 @@ defmodule Zellautomat do
   Durch den Parameter toggle kann diese Funktion an oder ausgeschaltet werden.
   Gibt den neuen Zustand zurück.
   """
-  @spec handle_info({:automatic_tick, toggel :: boolean(), pid :: pid()}, state :: term()) ::
+  @spec handle_info({:automatic_tick, toggel :: boolean()}, state :: term()) ::
           {:noreply, state :: term()}
   @impl true
-  def handle_info({:automatic_tick, toggel, pid}, state) do
+  def handle_info({:automatic_tick, toggel}, state) do
     if toggel do
       t = XY.get(:toggel)
       XY.set(:toggel, !t)
@@ -114,8 +114,8 @@ defmodule Zellautomat do
 
     if t do
       tick()
-      send(pid, {:new_map, Zustand.get_akt_map()})
-      Process.send_after(self(), {:automatic_tick, false, pid}, 1000)
+      send(:field, {:new_map, Zustand.get_akt_map()})
+      Process.send_after(:zellautomat, {:automatic_tick, false}, 1000)
     end
 
     {:noreply, state}

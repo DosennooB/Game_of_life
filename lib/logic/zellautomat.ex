@@ -47,8 +47,8 @@ defmodule Zellautomat do
           {:noreply, state :: term()}
   @impl true
   def handle_info({:set_xy, x, y}, state) do
-    XY.set(:x, min(x, 1))
-    XY.set(:y, min(y, 1))
+    XY.set(:x, max(x, 1))
+    XY.set(:y, max(y, 1))
     resize()
     send(:field, {:new_map, Zustand.get_akt_map()})
     {:noreply, state}
@@ -70,19 +70,10 @@ defmodule Zellautomat do
   @spec handle_info({:set_tick_rate, value :: integer()}, state :: term()) :: {:noreply, state :: term()}
   @impl true
   def handle_info({:set_tick_rate, value}, state) do
-    XY.set(:tick_rate, min(value, 1))
+    XY.set(:tick_rate, max(value, 1))
     {:noreply, state}
   end
 
-  @doc """
-  Sendet alle Parameter des Zellautomaten wie auch den Zellautomaten.
-  """
-  @spec handle_info({:get_all_params}, state :: term()) :: {:noreply, state :: term()}
-  @impl true
-  def handle_info({:get_all_params}, state) do
-    send(:field, {XY.get_all(), Zustand.get_akt_map()})
-    {:noreply, state}
-  end
 
   @doc """
   Der nächste Zustand des Automaten wird berechnet.
@@ -113,9 +104,10 @@ defmodule Zellautomat do
     t = XY.get(:toggel)
 
     if t do
+      time = XY.get(:tick_rate)
       tick()
       send(:field, {:new_map, Zustand.get_akt_map()})
-      Process.send_after(:zellautomat, {:automatic_tick, false}, 1000)
+      Process.send_after(:zellautomat, {:automatic_tick, false}, time)
     end
 
     {:noreply, state}
@@ -128,7 +120,7 @@ defmodule Zellautomat do
   an die Agents weiter. Nur Zellen die den Wert 1 haben oder Nachtbar einer
   Zelle mit dem Wert 1 sind, werden berechnet.
   """
-  @spec tick :: :ok
+  @spec tick() :: :ok
   def tick() do
     map = Zustand.get_akt_map()
 

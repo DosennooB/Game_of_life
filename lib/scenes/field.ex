@@ -11,11 +11,9 @@ defmodule GameOfLife.Scene.Field do
   @tile_field 900
 
   @moduledoc """
-  Ist die eingentliche Ansicht des Zellautomaten.
+  Ist die Ansicht des Zellautomaten.
 
-  Besteht aus einem Spielfeld aus Buttons, die jeweils eine Zelle representieren.
-  Durch den Button "next" kann der nächte Zustand des Spielfeldes berechnet werden.
-  Durch "run" wird der der Zelleautomat angegewiesen in Intervallen seinen Zustand neu zu berechnen.
+  Besteht aus einem Feld aus Zellen und mehreren Parametern die sich zur Laufzeit verändern lassen.
   """
 
   @graph Graph.build()
@@ -37,26 +35,51 @@ defmodule GameOfLife.Scene.Field do
           height: 100,
           width: 300,
           text_align: :left,
-          font_size: @text_size, t: {1000, 100})
+          font_size: @text_size,
+           t: {1000, 100})
          |> toggle(
            false,
            id: :toggle_torisch,
            thumb_radius: @text_size/4 ,
-           t: {1200, 100})
+           t: {1200, 100}
+           )
+         |> text("Speed",
+         height: 100,
+         font_size: @text_size,
+          t: {1000, 200}
+         )
+        |> slider(
+          {{1,500}, 500},
+         width: 250,
+          id: :tick_rate,
+          t: {1150, 200}
+         )
+        |> text("Dimension XY",
+        height: 100,
+        wigth: 300,
+        font_size: @text_size,
+        t: {1000, 300})
+        |> slider(
+          {{1,200}, 20},
+          width: 400,
+          id: :dimension_xy,
+          t: {1000, 350}
+        )
         |> button("crash Gui",
            id: :crash_GUI,
            height: 100,
            width: 200,
            font_size: @text_size,
            t: {1000, 900}
-         )
+           )
          |> button("crash Zellautomat",
           id: :crash_Zellautomat,
           height: 100,
-           width: 300,
+           width: 200,
            font_size: @text_size,
-           t: {1200, 900}
-         )
+           t: {1250, 900}
+           )
+
 
 
 
@@ -67,21 +90,30 @@ defmodule GameOfLife.Scene.Field do
   Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
   """
   def init(_, opts) do
+
+
+    Process.register(self(), :field)
+
+    #params = XY.get_all()
+#methoden schreiben die das element aus der Liste nehmen und den Graph verändern.
+
+    map = Zustand.get_akt_map()
+    g = build_rect(@graph, map)
+
     state = %{
       graph: @graph,
-      map: %{},
+      map: map,
       viewport: opts[:viewport]
     }
 
-    Process.register(self(), :field)
-    map = Zustand.get_akt_map()
-    g = build_rect(@graph, map)
     {:ok, state, push: g}
   end
 
   @doc """
   Verarbeitet die Eingabe eines Buttons.
 
+  `{:value_changed, :toggle_torisch, bool}`
+  Andert den Parameter für Torisch im Zellautomat.
 
   `{:click, :next_step}`
   Lässt den Automaten den neuen Zustand berechnen.
@@ -89,11 +121,28 @@ defmodule GameOfLife.Scene.Field do
   `{:click, :intervall}`
   Gibt den Zellautomaten dass Signal automatisch weiter zu laufen
   oder aufzuhören. Updatete den Button entsprechend.
+
+  `{:click, :crash_Zellautomat}
+  Lässt den Zellautomaten abstürzen.
+
+  `{:click, :crash_GUI}`
+  Lässt die Gui abstürzen.
   """
   def filter_event({:value_changed, :toggle_torisch, bool}, _from, state) do
     send(:zellautomat, {:set_torisch, bool})
     {:noreply, state}
   end
+
+  def filter_event({:value_changed, :tick_rate, value}, _from, state) do
+    send(:zellautomat, {:set_tick_rate, value})
+    {:noreply, state}
+  end
+
+  def filter_event({:value_changed, :dimension_xy, value}, _from, state) do
+    send(:zellautomat, {:set_xy, value , value})
+    {:noreply, state}
+  end
+
 
   @spec filter_event({:click, :next_step}, from :: pid(), state :: term()) ::
           {:noreply, state :: term(), [push: g :: Scenic.Graph.t()]}
@@ -118,7 +167,12 @@ defmodule GameOfLife.Scene.Field do
   end
 
   def filter_event({:click, :crash_Zellautomat}, _from, state) do
-    Process.exit(:zellautomat, "Stirb")
+    Process.exit(:zellautomat, :kill)
+    {:noreply, state}
+  end
+
+  def filter_event({:click, :crash_GUI}, _from, state) do
+    Process.exit(:field, 0)
     {:noreply, state}
   end
 

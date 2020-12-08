@@ -31,10 +31,18 @@ defmodule Zellautomat do
   Es können mehrere Zellen gleichzeitig
   verändert werden.
   """
-  @spec handle_info({:toggel_cell, z :: [Zelle.t()]}, state :: term()) :: {:noreply, state :: term()}
+  @spec handle_info({:toggel_cell, z :: [Zelle.t()]}, state :: term()) ::
+          {:noreply, state :: term()}
   @impl true
   def handle_info({:toggel_cell, z}, state) do
-    Zustand.toggel_cell(z)
+    ztr = relocate_cell(z)
+
+    Zustand.toggel_cell(ztr)
+
+    if !XY.get(:torisch) do
+      resize()
+    end
+
     send(:field, {:new_map, Zustand.get_akt_map()})
     {:noreply, state}
   end
@@ -54,11 +62,11 @@ defmodule Zellautomat do
     {:noreply, state}
   end
 
-
   @doc """
   Ändert den Torisch Wert in der Datenhaltung.
   """
-  @spec handle_info({:set_torisch, torisch_wert :: boolean()}, state :: term()) :: {:noreply, state :: term()}
+  @spec handle_info({:set_torisch, torisch_wert :: boolean()}, state :: term()) ::
+          {:noreply, state :: term()}
   def handle_info({:set_torisch, torisch_wert}, state) do
     XY.set(:torisch, torisch_wert)
     {:noreply, state}
@@ -67,13 +75,13 @@ defmodule Zellautomat do
   @doc """
   Ändert den Wert für die Tickrate in Millisekunden.
   """
-  @spec handle_info({:set_tick_rate, value :: integer()}, state :: term()) :: {:noreply, state :: term()}
+  @spec handle_info({:set_tick_rate, value :: integer()}, state :: term()) ::
+          {:noreply, state :: term()}
   @impl true
   def handle_info({:set_tick_rate, value}, state) do
     XY.set(:tick_rate, max(value, 1))
     {:noreply, state}
   end
-
 
   @doc """
   Der nächste Zustand des Automaten wird berechnet.
@@ -147,14 +155,15 @@ defmodule Zellautomat do
     map = Zustand.get_akt_map()
     x = XY.get(:x)
     y = XY.get(:y)
-    Enum.map(map, fn{k = %Zelle{}, v} ->
+
+    Enum.map(map, fn {k = %Zelle{}, v} ->
       if k.x <= x and k.y <= y and v == 1 do
         Zustand.set_new_cell(k)
       end
     end)
+
     Zustand.end_tick()
   end
-
 
   @doc """
   Ermittelt Nachtbarn und die angegebene Zelle.
@@ -298,6 +307,31 @@ defmodule Zellautomat do
 
       true ->
         around_wert(wert, xline, yline, tx, ty, k, torisch)
+    end
+  end
+
+  @doc """
+  Setzt Zellen in den Torischen Körper.
+
+  Wird nur aktive wenn der Zellautomat sich im Torischen Modus befindet.
+  """
+  @spec relocate_cell(z :: [Zelle.t()]) :: [Zelle.t()]
+  def relocate_cell(z) do
+    xline = XY.get(:x)
+    yline = XY.get(:y)
+    bool = XY.get(:torisch)
+
+    cond do
+      bool == true ->
+        Enum.map(z, fn k = %Zelle{} ->
+          %Zelle{
+            x: torus_func(k.x, xline),
+            y: torus_func(k.y, yline)
+          }
+        end)
+
+      true ->
+        z
     end
   end
 

@@ -10,6 +10,11 @@ defmodule GameOfLife.Scene.Field do
   @offset 00
   @tile_field 900
 
+  @muster_einezelle [{0, 0}]
+  @muster_blinker [{0, 0}, {1, 0}, {2, 0}]
+  @muster_uhr [{0, 0}, {1, 0}, {2, -1}, {2, 1}, {3, 1}, {1, 2}]
+  @muster_kroete [{0, 0}, {0, 1}, {0, 2}, {1, 1}, {1, 2}, {1, 3}]
+  @muster_gleiter [{0, 0}, {1, 0}, {2, 0}, {2, -1}, {1, -2}]
   @moduledoc """
   Ist die Ansicht des Zellautomaten.
 
@@ -32,57 +37,79 @@ defmodule GameOfLife.Scene.Field do
            t: {600, 900}
          )
          |> text("Torisch:",
-          height: 100,
-          width: 300,
-          text_align: :left,
-          font_size: @text_size,
-           t: {1000, 100})
+           height: 100,
+           width: 300,
+           text_align: :left,
+           font_size: @text_size,
+           t: {1000, 100}
+         )
          |> toggle(
            false,
+           height: 100,
+           width: 300,
            id: :toggle_torisch,
-           thumb_radius: @text_size/4 ,
+           thumb_radius: @text_size / 4,
            t: {1200, 100}
-           )
+         )
          |> text("Speed",
-         height: 100,
-         font_size: @text_size,
-          t: {1000, 200}
+           height: 100,
+           font_size: @text_size,
+           t: {1000, 200}
          )
-        |> slider(
-          {{1,500}, 500},
-         width: 250,
-          id: :tick_rate,
-          t: {1150, 200}
+         |> slider(
+           {{1, 500}, 500},
+           height: 100,
+           width: 250,
+           id: :tick_rate,
+           t: {1150, 200}
          )
-        |> text("Dimension XY",
-        height: 100,
-        wigth: 300,
-        font_size: @text_size,
-        t: {1000, 300})
-        |> slider(
-          {{1,200}, 20},
-          width: 400,
-          id: :dimension_xy,
-          t: {1000, 350}
-        )
-        |> button("crash Gui",
+         |> text("Dimension XY",
+           height: 100,
+           wigth: 300,
+           font_size: @text_size,
+           t: {1000, 300}
+         )
+         |> slider(
+           {{1, 200}, 20},
+           height: 100,
+           width: 400,
+           id: :dimension_xy,
+           t: {1000, 350}
+         )
+         |> text("Objekt Auswahl",
+           height: 100,
+           width: 300,
+           font_size: @text_size,
+           t: {1000, 400}
+         )
+         |> dropdown(
+           {[
+              {"Eine Zelle", :eine_zelle},
+              {"Blinker", :blinker},
+              {"Uhr", :uhr},
+              {"Kröte", :kroete},
+              {"Gleiter", :gleiter}
+            ], :eine_zelle},
+           height: 75,
+           width: 400,
+           font_size: @text_size,
+           id: :dropdown_objekte,
+           t: {1000, 450}
+         )
+         |> button("crash Gui",
            id: :crash_GUI,
            height: 100,
            width: 200,
            font_size: @text_size,
            t: {1000, 900}
-           )
+         )
          |> button("crash Zellautomat",
-          id: :crash_Zellautomat,
-          height: 100,
+           id: :crash_Zellautomat,
+           height: 100,
            width: 200,
            font_size: @text_size,
            t: {1250, 900}
-           )
-
-
-
-
+         )
 
   @doc """
   Initialisierung der Oberfläche
@@ -90,18 +117,17 @@ defmodule GameOfLife.Scene.Field do
   Läst das Gitter anhand der Dimensionen aus Agent **:xy** aufbauen.
   """
   def init(_, opts) do
-
-
     Process.register(self(), :field)
 
-    #params = XY.get_all()
-#methoden schreiben die das element aus der Liste nehmen und den Graph verändern.
+    # params = XY.get_all()
+    # methoden schreiben die das element aus der Liste nehmen und den Graph verändern.
 
     map = Zustand.get_akt_map()
     g = build_rect(@graph, map)
 
     state = %{
       graph: @graph,
+      dropdown_objekte: :eine_zelle,
       map: map,
       viewport: opts[:viewport]
     }
@@ -110,10 +136,19 @@ defmodule GameOfLife.Scene.Field do
   end
 
   @doc """
-  Verarbeitet die Eingabe eines Buttons.
+  Verarbeitet die Eingabe der Events.
 
   `{:value_changed, :toggle_torisch, bool}`
   Andert den Parameter für Torisch im Zellautomat.
+
+  `{:value_changed, :tick_rate, value}`
+  Ändert den Parameter für tick rate im Zellautomat.
+
+  `{:value_changed, :dimension_xy, value}`
+  Ändert den Parameter für die Dimension im Zellautomat.
+
+  `{value_changed, :dropdown_objekte, value}`
+  Ändert den State für die Angabe welches Muster auf dem Zellautomaten gezeichnet wird.
 
   `{:click, :next_step}`
   Lässt den Automaten den neuen Zustand berechnen.
@@ -127,6 +162,7 @@ defmodule GameOfLife.Scene.Field do
 
   `{:click, :crash_GUI}`
   Lässt die Gui abstürzen.
+
   """
   def filter_event({:value_changed, :toggle_torisch, bool}, _from, state) do
     send(:zellautomat, {:set_torisch, bool})
@@ -139,10 +175,14 @@ defmodule GameOfLife.Scene.Field do
   end
 
   def filter_event({:value_changed, :dimension_xy, value}, _from, state) do
-    send(:zellautomat, {:set_xy, value , value})
+    send(:zellautomat, {:set_xy, value, value})
     {:noreply, state}
   end
 
+  def filter_event({:value_changed, :dropdown_objekte, value}, _from, state) do
+    new_state = Map.put(state, :dropdown_objekte, value)
+    {:noreply, new_state}
+  end
 
   @spec filter_event({:click, :next_step}, from :: pid(), state :: term()) ::
           {:noreply, state :: term(), [push: g :: Scenic.Graph.t()]}
@@ -172,7 +212,7 @@ defmodule GameOfLife.Scene.Field do
   end
 
   def filter_event({:click, :crash_GUI}, _from, state) do
-    Process.exit(:field, 0)
+    Process.exit(self(), 0)
     {:noreply, state}
   end
 
@@ -188,7 +228,11 @@ defmodule GameOfLife.Scene.Field do
           state :: term()
         ) ::
           {:noreply, state :: term()}
-  def handle_input({:cursor_button, {:left, :press, 0, {xposo, ypos}}}, _context, state) do
+  def handle_input(
+        {:cursor_button, {:left, :press, 0, {xposo, ypos}}},
+        _context,
+        %{dropdown_objekte: muster} = state
+      ) do
     xpos = xposo - @offset
 
     if 0 <= xpos and xpos < @tile_field and 0 <= ypos and ypos < @tile_field do
@@ -202,7 +246,8 @@ defmodule GameOfLife.Scene.Field do
         y: y
       }
 
-      send(:zellautomat, {:toggel_cell, [z]})
+      z_list = cell_pattern(z, muster)
+      send(:zellautomat, {:toggel_cell, z_list})
     end
 
     {:noreply, state}
@@ -233,6 +278,51 @@ defmodule GameOfLife.Scene.Field do
       Graph.modify(gr, :intervall, &button(&1, "stop"))
     else
       Graph.modify(gr, :intervall, &button(&1, "run"))
+    end
+  end
+
+  @spec cell_pattern(z :: Zelle.t(), muster :: atom()) :: [Zelle.t()]
+  def cell_pattern(z, muster) do
+    cond do
+      muster == :eine_zelle ->
+        Enum.map(@muster_einezelle, fn {x, y} ->
+          %Zelle{
+            x: x + z.x,
+            y: y + z.y
+          }
+        end)
+
+      muster == :blinker ->
+        Enum.map(@muster_blinker, fn {x, y} ->
+          %Zelle{
+            x: x + z.x,
+            y: y + z.y
+          }
+        end)
+
+      muster == :uhr ->
+        Enum.map(@muster_uhr, fn {x, y} ->
+          %Zelle{
+            x: x + z.x,
+            y: y + z.y
+          }
+        end)
+
+      muster == :kroete ->
+        Enum.map(@muster_kroete, fn {x, y} ->
+          %Zelle{
+            x: x + z.x,
+            y: y + z.y
+          }
+        end)
+
+      muster == :gleiter ->
+        Enum.map(@muster_gleiter, fn {x, y} ->
+          %Zelle{
+            x: x + z.x,
+            y: y + z.y
+          }
+        end)
     end
   end
 
